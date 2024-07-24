@@ -1,4 +1,5 @@
 import { ModeToggle } from "@/components/mode-toggle";
+import { format } from "date-fns";
 import db from "@/lib/db";
 import {
   Card,
@@ -33,8 +34,16 @@ export default async function Home() {
 
   return (
     <section className="block-space">
-      <div className="flex items-center justify-between mb-12">
+      <div className="text-center space-y-2 mb-12">
+        <h1>
+          Hydra Node{" "}
+          <span className="via-[#AF89EE]/80.89% bg-gradient-to-r from-[#AF89EE] to-[#5153D7] bg-clip-text text-transparent">
+            Admin Panel
+          </span>
+        </h1>
         <h2>All Exam Types are {examTypes.length}</h2>
+      </div>
+      <div className="absolute top-10 left-12">
         <CreateExamTypeDialog />
       </div>
       <ul className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -49,11 +58,14 @@ export default async function Home() {
 }
 
 function ExamTypeCard({ examType }: { examType: ExamType }) {
+  const formattedDate = format(new Date(examType.updatedAt), "dd MMMM yyyy");
   return (
     <Card>
       <CardHeader className="relative bg-muted rounded-b-md">
         <CardTitle>{examType.name}</CardTitle>
-        <CardDescription>Created: 25 November, 2024</CardDescription>
+        <CardDescription className="font-semibold">
+          Updated At: {formattedDate}
+        </CardDescription>
         <DeleteExamVendorButton vendorId={examType.id} />
       </CardHeader>
       <CardContent className="p-4">
@@ -62,21 +74,15 @@ function ExamTypeCard({ examType }: { examType: ExamType }) {
         <div className="space-y-3">
           <div className="flex justify-between">
             <div className="text-muted-foreground font-semibold">
-              Time Available
+              Total Exams
             </div>
-            <div className="font-semibold">45 minutes</div>
+            <div className="font-semibold">{examType.examCount}</div>
           </div>
           <div className="flex justify-between">
             <div className="text-muted-foreground font-semibold">
-              Total Questions
+              Available Levels
             </div>
-            <div className="font-semibold">24</div>
-          </div>
-          <div className="flex justify-between">
-            <div className="text-muted-foreground font-semibold">
-              Total Attempts
-            </div>
-            <div className="font-semibold">1</div>
+            <div className="font-semibold">3</div>
           </div>
         </div>
       </CardContent>

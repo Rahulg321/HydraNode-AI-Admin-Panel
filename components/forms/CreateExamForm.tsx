@@ -18,58 +18,58 @@ import { useTransition } from "react";
 import { createVendor } from "@/app/actions/CreateVendor";
 import { useToast } from "../ui/use-toast";
 import {
-  CreateVendorFormSchema,
-  VendorFormZodType,
-} from "@/app/schemas/CreateVendorSchema";
+  CreateExamFormSchema,
+  CreateExamFormZodType,
+} from "@/app/schemas/CreateExamSchema";
 
-export default function CreateVendorForm() {
+const CreateExamForm = () => {
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
 
-  const form = useForm<VendorFormZodType>({
-    resolver: zodResolver(CreateVendorFormSchema),
+  const form = useForm<CreateExamFormZodType>({
+    resolver: zodResolver(CreateExamFormSchema),
     defaultValues: {
-      vendorName: "",
+      topic: "",
+      numberOfQuestions: 0,
     },
   });
-  function onSubmit(values: VendorFormZodType) {
+
+  function onSubmit(values: CreateExamFormZodType) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
+    console.log("hello world");
     console.log(values);
-    startTransition(async () => {
-      const response = await createVendor(values);
-      if (response.success) {
-        toast({
-          variant: "success",
-          title: "Successfully Created New Vendor 🎉",
-          description: response.success,
-        });
-
-        form.reset();
-      }
-
-      if (response.error) {
-        toast({
-          variant: "destructive",
-          title: "Uh oh! Something went wrong. ❌",
-          description: response.error,
-        });
-      }
-    });
   }
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
-          name="vendorName"
+          name="topic"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Vendor Name</FormLabel>
+              <FormLabel>Topic Name</FormLabel>
               <FormControl>
-                <Input placeholder="google exams" {...field} />
+                <Input placeholder="cloud engineer..." {...field} />
               </FormControl>
-              <FormDescription>Enter the Name of the Vendor.</FormDescription>
+              <FormDescription>Enter a topic name.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="numberOfQuestions"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Number of Questions</FormLabel>
+              <FormControl>
+                <Input placeholder="12" {...field} type="number" />
+              </FormControl>
+              <FormDescription>
+                Enter the number of questions an exam should have.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -80,4 +80,6 @@ export default function CreateVendorForm() {
       </form>
     </Form>
   );
-}
+};
+
+export default CreateExamForm;

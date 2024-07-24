@@ -45,27 +45,29 @@ model Account {
 }
 
 model ExamType {
-  id    String @id @default(cuid())
-  name  String @unique
-  slug  String @unique
-  exams Exam[]
+  id        String   @id @default(cuid())
+  name      String   @unique
+  slug      String   @unique
+  exams     Exam[]
+  examCount Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
-model ExamLevel {
-  id    String @id @default(cuid())
-  name  String @unique
-  slug  String @unique
-  exams Exam[]
+enum ExamLevel {
+  ASSOCIATE
+  PROFESSIONAL
+  EXPERT
 }
 
 model Exam {
-  id          String    @id @default(cuid())
-  name        String
-  slug        String    @unique
-  examTypeId  String
-  examLevelId String
-  examType    ExamType  @relation(fields: [examTypeId], references: [id])
-  examLevel   ExamLevel @relation(fields: [examLevelId], references: [id])
+  id         String     @id @default(cuid())
+  name       String
+  slug       String     @unique
+  examTypeId String
+  examType   ExamType   @relation(fields: [examTypeId], references: [id])
+  examLevel  ExamLevel  @default(ASSOCIATE)
+  questions  Question[]
 }
 
 model Quiz {
@@ -85,10 +87,12 @@ model Question {
   answer     String
   isCorrect  Boolean
   options    Json //for mcq questions
-  quizId     String
   userAnswer String
 
-  quiz Quiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  quizId String
+  quiz   Quiz    @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  examId String?
+  Exam   Exam?   @relation(fields: [examId], references: [id])
 
   @@index([quizId], name: "quizId")
 }
