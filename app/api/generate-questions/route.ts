@@ -1,42 +1,50 @@
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
-import { generateObject, generateText } from "ai";
+import { generateObject } from "ai";
 import { NextResponse } from "next/server";
 import { z, ZodError } from "zod";
 
 const google = createGoogleGenerativeAI({
-  // custom settings
   apiKey: process.env.GOOGLE_API_KEY,
 });
 
+const questionSchema = z.object({
+  question: z.string().describe("The question string"),
+  answer: z
+    .string()
+    .describe("The answer to the question, can be a single word or a sentence"),
+  option1: z.string().describe("The first option for the question"),
+  option2: z.string().describe("The second option for the question"),
+  option3: z.string().describe("The third option for the question"),
+});
+
 export async function POST(req: Request) {
-  console.log("calling the post route");
+  console.log("Calling the POST route");
 
   try {
     const body = await req.json();
-    const { topic } = body;
+    const { topic, numberOfQuestions } = body;
+
     console.log(topic);
 
-    const result = await generateObject({
-      model: google("models/gemini-1.5-pro-latest"),
-      prompt: `You are intelligent educator and are very proficient in generating questions for various exams! I want you to generate 10 mcq questions for this topic: ${topic} along with their answers and options.The answer and their options can be single words or sentences.`,
-      schema: z.object({
-        question: z.string().describe("the question string"),
-        answer: z
-          .string()
-          .describe(
-            "the answer of the above question, can be a single word or a sentence"
-          ),
-        option1: z.string().describe("the first option of the question"),
-        option2: z.string().describe("the second option of the question"),
-        option3: z.string().describe("the third option of the question"),
-      }),
-    });
+    let questions = [];
 
-    console.log(result.object);
+    for (let i = 0; i < numberOfQuestions; i++) {
+      const result = await generateObject({
+        model: google("models/gemini-1.5-pro-latest"),
+        prompt: `You are an intelligent educator and very proficient in generating questions for various exams! Please generate a unique MCQ question for this topic: "${topic}". Ensure that each question is distinct from others. The answer and options can be single words or sentences. Here is question number ${
+          i + 1
+        }:`,
+        schema: questionSchema,
+      });
+
+      questions.push(result.object);
+    }
+
+    console.log(questions);
 
     return NextResponse.json(
       {
-        result: result.object,
+        result: questions,
       },
       {
         status: 200,

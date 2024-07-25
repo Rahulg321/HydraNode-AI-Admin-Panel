@@ -1,7 +1,8 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, Trash2Icon } from "lucide-react";
+import { ArrowUpDown } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -12,19 +13,21 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ArrowUpDown } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
+import { quizQuestions } from "./page";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
-export type Payment = {
+export type Question = {
   id: string;
-  amount: number;
-  status: "pending" | "processing" | "success" | "failed";
-  email: string;
+  question: string;
+  answer: string;
+  option1: string;
+  option2: string;
+  option3: string;
 };
 
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<Question>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -44,43 +47,44 @@ export const columns: ColumnDef<Payment>[] = [
         aria-label="Select row"
       />
     ),
+    enableSorting: false,
+    enableHiding: false,
   },
   {
-    accessorKey: "status",
-    header: "Status",
-  },
-  {
-    accessorKey: "email",
+    accessorKey: "question",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Email
+          Question
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
   },
   {
-    accessorKey: "amount",
-    header: () => <div className="text-right">Amount</div>,
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"));
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(amount);
-
-      return <div className="text-right font-medium">{formatted}</div>;
-    },
+    accessorKey: "answer",
+    header: "Answer",
+  },
+  {
+    accessorKey: "option1",
+    header: "Option1",
+  },
+  {
+    accessorKey: "option2",
+    header: "Option2",
+  },
+  {
+    accessorKey: "option3",
+    header: "Option3",
   },
   {
     id: "actions",
     cell: ({ row }) => {
-      const payment = row.original;
-
+      const question = row.original;
+      console.log("question in actions is ", question);
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -91,14 +95,14 @@ export const columns: ColumnDef<Payment>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
-            >
-              Copy payment ID
-            </DropdownMenuItem>
+            <DropdownMenuItem>Edit</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
+            <DropdownMenuItem
+              className="text-destructive hover:text-red-400 cursor-pointer"
+              onClick={() => {}}
+            >
+              Delete <Trash2Icon className="h-4 w-4 ml-2" />
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

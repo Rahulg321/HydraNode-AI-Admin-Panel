@@ -1,19 +1,24 @@
 "use client";
-
+import * as React from "react";
 import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
-  getPaginationRowModel,
-  ColumnFiltersState,
-  SortingState,
   useReactTable,
   getSortedRowModel,
-  getFilteredRowModel,
+  ColumnFiltersState,
   VisibilityState,
+  getFilteredRowModel,
+  SortingState,
+  getPaginationRowModel,
 } from "@tanstack/react-table";
 import { Input } from "@/components/ui/input";
-
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -23,13 +28,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import React from "react";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -44,10 +42,9 @@ export function DataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
-  const [rowSelection, setRowSelection] = React.useState({});
-
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
+  const [rowSelection, setRowSelection] = React.useState({});
 
   const table = useReactTable({
     data,
@@ -60,7 +57,6 @@ export function DataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
-
     state: {
       sorting,
       columnFilters,
@@ -71,12 +67,27 @@ export function DataTable<TData, TValue>({
 
   return (
     <div>
-      <div className="flex items-center py-4">
+      <div className="flex-1 text-sm text-muted-foreground">
+        {table.getFilteredSelectedRowModel().rows.length} of{" "}
+        {table.getFilteredRowModel().rows.length} row(s) selected.
+      </div>
+      <div className="flex items-center py-4 gap-4">
         <Input
-          placeholder="Filter emails..."
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+          placeholder="Filter questions..."
+          value={
+            (table.getColumn("question")?.getFilterValue() as string) ?? ""
+          }
           onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
+            table.getColumn("question")?.setFilterValue(event.target.value)
+          }
+          className="max-w-sm"
+        />
+
+        <Input
+          placeholder="Filter answers..."
+          value={(table.getColumn("answer")?.getFilterValue() as string) ?? ""}
+          onChange={(event) =>
+            table.getColumn("answer")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
@@ -156,24 +167,24 @@ export function DataTable<TData, TValue>({
             )}
           </TableBody>
         </Table>
-        <div className="flex items-center justify-end space-x-2 py-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-        </div>
+      </div>
+      <div className="flex items-center justify-end space-x-2 py-4">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => table.previousPage()}
+          disabled={!table.getCanPreviousPage()}
+        >
+          Previous
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => table.nextPage()}
+          disabled={!table.getCanNextPage()}
+        >
+          Next
+        </Button>
       </div>
     </div>
   );
