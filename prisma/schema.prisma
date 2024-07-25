@@ -3,6 +3,9 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// command to run a docker for connecting postgres
+// docker run -d -e POSTGRES_DB=mydb -e POSTGRES_PASSWORD=testpass123 -e POSTGRES_USER=postgres -p "6500:5432" postgres
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -61,13 +64,17 @@ enum ExamLevel {
 }
 
 model Exam {
-  id         String     @id @default(cuid())
-  name       String
-  slug       String     @unique
-  examTypeId String
-  examType   ExamType   @relation(fields: [examTypeId], references: [id])
-  examLevel  ExamLevel  @default(ASSOCIATE)
-  questions  Question[]
+  id          String     @id @default(cuid())
+  name        String
+  slug        String     @unique
+  examTypeId  String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  timeAllowed Int
+  attempts    Int
+  examType    ExamType   @relation(fields: [examTypeId], references: [id], onDelete: Cascade)
+  examLevel   ExamLevel  @default(ASSOCIATE)
+  questions   Question[]
 }
 
 model Quiz {

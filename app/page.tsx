@@ -74,12 +74,6 @@ function ExamTypeCard({ examType }: { examType: ExamType }) {
         <div className="space-y-3">
           <div className="flex justify-between">
             <div className="text-muted-foreground font-semibold">
-              Total Exams
-            </div>
-            <div className="font-semibold">{examType.examCount}</div>
-          </div>
-          <div className="flex justify-between">
-            <div className="text-muted-foreground font-semibold">
               Available Levels
             </div>
             <div className="font-semibold">3</div>
