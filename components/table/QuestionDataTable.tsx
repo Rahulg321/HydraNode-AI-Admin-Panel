@@ -72,6 +72,25 @@ export function QuestionDataTable<TData, TValue>({
         {table.getFilteredRowModel().rows.length} row(s) selected.
       </div>
       <div className="flex items-center py-4 gap-4">
+        <Input
+          placeholder="Filter questions..."
+          value={
+            (table.getColumn("question")?.getFilterValue() as string) ?? ""
+          }
+          onChange={(event) =>
+            table.getColumn("question")?.setFilterValue(event.target.value)
+          }
+          className="max-w-sm"
+        />
+
+        <Input
+          placeholder="Filter answers..."
+          value={(table.getColumn("answer")?.getFilterValue() as string) ?? ""}
+          onChange={(event) =>
+            table.getColumn("answer")?.setFilterValue(event.target.value)
+          }
+          className="max-w-sm"
+        />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
