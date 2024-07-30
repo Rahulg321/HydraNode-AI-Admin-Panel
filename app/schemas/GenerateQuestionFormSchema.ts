@@ -5,7 +5,7 @@ export const GenerateQuestionFormSchema = z.object({
     message: "Topic Name must be at least 5 characters.",
   }),
   difficulty: z.enum(["EASY", "MEDIUM", "HARD"]),
-  numberOfQuestions: z.coerce.number().min(1).max(20),
+  numberOfQuestions: z.coerce.number().min(1).max(50),
 });
 
 export type GenerateQuestionZodType = z.infer<
