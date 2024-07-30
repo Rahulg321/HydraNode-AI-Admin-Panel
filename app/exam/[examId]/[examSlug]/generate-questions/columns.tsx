@@ -1,7 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal, Trash2Icon } from "lucide-react";
+import { CloudLightning, MoreHorizontal, Trash2Icon } from "lucide-react";
 import { ArrowUpDown } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
-import { quizQuestions } from "./page";
+import { quizQuestions } from "../page";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -25,9 +25,18 @@ export type Question = {
   option1: string;
   option2: string;
   option3: string;
+  option4: string;
 };
 
-export const columns: ColumnDef<Question>[] = [
+type ColumnProps = {
+  onEdit: (id: string) => void;
+  onDelete: (id: string) => void;
+};
+
+export const columns = ({
+  onEdit,
+  onDelete,
+}: ColumnProps): ColumnDef<Question>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -81,10 +90,14 @@ export const columns: ColumnDef<Question>[] = [
     header: "Option3",
   },
   {
+    accessorKey: "option4",
+    header: "Option4",
+  },
+  {
     id: "actions",
     cell: ({ row }) => {
       const question = row.original;
-      console.log("question in actions is ", question);
+
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -99,7 +112,9 @@ export const columns: ColumnDef<Question>[] = [
             <DropdownMenuSeparator />
             <DropdownMenuItem
               className="text-destructive hover:text-red-400 cursor-pointer"
-              onClick={() => {}}
+              onClick={() => {
+                onDelete(question.id);
+              }}
             >
               Delete <Trash2Icon className="h-4 w-4 ml-2" />
             </DropdownMenuItem>

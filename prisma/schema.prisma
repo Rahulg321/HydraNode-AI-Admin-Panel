@@ -89,17 +89,16 @@ model Quiz {
 }
 
 model Question {
-  id         String  @id @default(cuid())
-  question   String
-  answer     String
-  isCorrect  Boolean
-  options    Json //for mcq questions
-  userAnswer String
+  id        String   @id @default(cuid())
+  question  String
+  answer    String
+  isCorrect Boolean? //for mcq question only
+  options   Json?
 
-  quizId String
-  quiz   Quiz    @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  // the exam to which the questions belong to
   examId String?
   Exam   Exam?   @relation(fields: [examId], references: [id])
 
-  @@index([quizId], name: "quizId")
+  Quiz   Quiz?   @relation(fields: [quizId], references: [id])
+  quizId String?
 }

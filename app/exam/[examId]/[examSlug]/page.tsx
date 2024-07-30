@@ -1,6 +1,6 @@
 import db from "@/lib/db";
-import { Question, columns } from "./columns";
-import { DataTable } from "./data-table";
+import { Question, columns } from "./generate-questions/columns";
+import { DataTable } from "./generate-questions/data-table";
 import { notFound } from "next/navigation";
 import GenerateQuestionsDialog from "@/components/GenerateQuestionsDialog";
 import { format } from "date-fns";
@@ -14,6 +14,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export const quizQuestions = [
   {
@@ -136,15 +138,23 @@ export default async function Page({
   params,
 }: {
   params: {
+    examId: string;
     examSlug: string;
   };
 }) {
   const currentExam = await db.exam.findUnique({
     where: {
-      slug: params.examSlug,
+      id: params.examId,
     },
     include: {
-      questions: true,
+      questions: {
+        select: {
+          id: true,
+          question: true,
+          answer: true,
+          options: true,
+        },
+      },
       examType: {
         select: {
           name: true,
@@ -170,14 +180,19 @@ export default async function Page({
   } = currentExam;
 
   const formattedDate = format(new Date(updatedAt), "dd MMMM yyyy");
+  console.log("questions are", questions);
 
   return (
     <section className="mx-auto block-space">
       <div className="absolute top-10 left-12">
-        <GenerateQuestionsDialog />
+        <Button asChild>
+          <Link href={`/exam/${id}/${slug}/generate-questions`}>
+            Generate Questions
+          </Link>
+        </Button>
       </div>
       <div className="text-center mb-12">
-        <h1>{name} Exam</h1>
+        <h1>{name}</h1>
       </div>
       <div className="mb-12 narrow-container">
         <span className="text-muted-foreground block font-semibold mb-2">
@@ -231,7 +246,6 @@ export default async function Page({
       </div>
       <div>
         <h3 className="text-center">Questions of {name}:-</h3>
-        <DataTable columns={columns} data={quizQuestions} />
       </div>
     </section>
   );

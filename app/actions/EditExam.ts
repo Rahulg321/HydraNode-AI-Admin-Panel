@@ -7,6 +7,7 @@ import {
 } from "../schemas/CreateExamSchema";
 import { ZodError } from "zod";
 import { revalidatePath } from "next/cache";
+import slugify from "slugify";
 
 const EditExam = async (
   examId: string,
@@ -25,19 +26,25 @@ const EditExam = async (
     const { topic, ExamLevel, timeAllowed, numberOfAttempts } =
       validatedFields.data;
 
+    // generating a new slug for the exam if the name was changed
+    const updatedSlug = slugify(topic, {
+      lower: true,
+    });
+
     await db.exam.update({
       where: {
         id: examId,
       },
       data: {
         name: topic,
+        slug: updatedSlug,
         examLevel: ExamLevel,
         attempts: numberOfAttempts,
         timeAllowed,
       },
     });
 
-    revalidatePath(`/exam/${examSlug}`);
+    revalidatePath(`/exam/${examId}/${examSlug}`);
 
     return {
       success: "successfully deleted Exam Vendor",

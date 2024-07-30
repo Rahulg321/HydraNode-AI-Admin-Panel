@@ -108,7 +108,7 @@ function ExamCard({
       </CardContent>
       <CardFooter className="flex flex-col gap-4">
         <Button className=" w-full" asChild>
-          <Link href={`/exam/${exam.slug}`}>
+          <Link href={`/exam/${exam.id}/${exam.slug}`}>
             View Details <ArrowTopRightIcon className="ml-2 h-4 w-4" />
           </Link>
         </Button>
