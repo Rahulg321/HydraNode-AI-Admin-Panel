@@ -1,8 +1,5 @@
 import db from "@/lib/db";
-import { Question, columns } from "./generate-questions/columns";
-import { DataTable } from "./generate-questions/data-table";
 import { notFound } from "next/navigation";
-import GenerateQuestionsDialog from "@/components/GenerateQuestionsDialog";
 import { format } from "date-fns";
 import EditExamFormCard from "@/components/forms/EditExamFormCard";
 import {
@@ -13,14 +10,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Prisma } from "@prisma/client";
-import editSingleQuestion from "@/app/actions/EditSingleQuestion";
-import deleteSingleQuestion from "@/app/actions/DeleteSingleQuestion";
-import { QuestionColumns } from "@/components/table/QuestionColumn";
-import { QuestionDataTable } from "@/components/table/QuestionDataTable";
+
 import ClientQuestionTable from "./ClientQuestionTable";
 
 export default async function Page({
