@@ -14,24 +14,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Question } from "@/lib/types";
+import { toast, useToast } from "../ui/use-toast";
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
-export type Question = {
-  id: string;
-  question: string;
-  answer: string;
-  option1: string;
-  option2: string;
-  option3: string;
-  option4: string;
-};
 
 type ColumnProps = {
-  onEdit: (id: string) => void;
+  onEdit: (question: Question) => void;
   onDelete: (id: string) => void;
 };
 
-export const columns = ({
+export const QuestionColumns = ({
   onEdit,
   onDelete,
 }: ColumnProps): ColumnDef<Question>[] => [
@@ -94,7 +87,7 @@ export const columns = ({
   {
     id: "actions",
     cell: ({ row }) => {
-      const question = row.original;
+      const questionCell = row.original;
 
       return (
         <DropdownMenu>
@@ -106,12 +99,19 @@ export const columns = ({
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem>Edit</DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                console.log(questionCell);
+                onEdit(questionCell);
+              }}
+            >
+              Edit
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               className="text-destructive hover:text-red-400 cursor-pointer"
               onClick={() => {
-                onDelete(question.id);
+                onDelete(questionCell.id);
               }}
             >
               Delete <Trash2Icon className="h-4 w-4 ml-2" />

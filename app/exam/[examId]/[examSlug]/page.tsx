@@ -16,123 +16,12 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-
-export const quizQuestions = [
-  {
-    id: "728ed52f",
-    question:
-      "What is the command-line interface for interacting with Google Cloud Platform services called?",
-    answer: "Cloud SDK",
-    option1: "Azure CLI",
-    option2: "Cloud SDK",
-    option3: "AWS CLI",
-  },
-  {
-    id: "1d4b8a3c",
-    question: "Which language is primarily used for Android app development?",
-    answer: "Java",
-    option1: "Swift",
-    option2: "Kotlin",
-    option3: "Java",
-  },
-  {
-    id: "f0a2c8d7",
-    question: "What is the name of the default package manager for Node.js?",
-    answer: "npm",
-    option1: "pip",
-    option2: "npm",
-    option3: "yarn",
-  },
-  {
-    id: "4f7a1e6b",
-    question: "Which HTML tag is used to define an unordered list?",
-    answer: "<ul>",
-    option1: "<ol>",
-    option2: "<li>",
-    option3: "<ul>",
-  },
-  {
-    id: "b3d4e9c1",
-    question: "What does CSS stand for?",
-    answer: "Cascading Style Sheets",
-    option1: "Creative Style Sheets",
-    option2: "Colorful Style Sheets",
-    option3: "Cascading Style Sheets",
-  },
-  {
-    id: "2e5c7d9a",
-    question: "Which company developed the React framework?",
-    answer: "Facebook",
-    option1: "Google",
-    option2: "Facebook",
-    option3: "Microsoft",
-  },
-  {
-    id: "8c3f1d5e",
-    question: "What is the purpose of the Git command `git commit`?",
-    answer: "Record changes to the repository",
-    option1: "Create a new branch",
-    option2: "Record changes to the repository",
-    option3: "Push changes to the remote repository",
-  },
-  {
-    id: "5a7e2c9d",
-    question: "What is the file extension for a Python file?",
-    answer: ".py",
-    option1: ".js",
-    option2: ".java",
-    option3: ".py",
-  },
-  {
-    id: "6d8f3e1b",
-    question:
-      "Which protocol is used to secure communications over the Internet?",
-    answer: "HTTPS",
-    option1: "FTP",
-    option2: "HTTP",
-    option3: "HTTPS",
-  },
-  {
-    id: "9a1b4c3f",
-    question: "What does SQL stand for?",
-    answer: "Structured Query Language",
-    option1: "Simple Query Language",
-    option2: "Structured Query Language",
-    option3: "Standard Query Language",
-  },
-  {
-    id: "c3d6e2f8",
-    question: "In CSS, which property is used to change the text color?",
-    answer: "color",
-    option1: "text-color",
-    option2: "font-color",
-    option3: "color",
-  },
-  {
-    id: "1e7b9d5a",
-    question: "Which HTTP method is used to retrieve data from a server?",
-    answer: "GET",
-    option1: "POST",
-    option2: "GET",
-    option3: "DELETE",
-  },
-  {
-    id: "4b6f2c1a",
-    question: "What is the default port for HTTP?",
-    answer: "80",
-    option1: "443",
-    option2: "80",
-    option3: "8080",
-  },
-  {
-    id: "7c5d8e3f",
-    question: "Which data structure uses LIFO (Last In, First Out) principle?",
-    answer: "Stack",
-    option1: "Queue",
-    option2: "Stack",
-    option3: "List",
-  },
-];
+import { Prisma } from "@prisma/client";
+import editSingleQuestion from "@/app/actions/EditSingleQuestion";
+import deleteSingleQuestion from "@/app/actions/DeleteSingleQuestion";
+import { QuestionColumns } from "@/components/table/QuestionColumn";
+import { QuestionDataTable } from "@/components/table/QuestionDataTable";
+import ClientQuestionTable from "./ClientQuestionTable";
 
 export default async function Page({
   params,
@@ -180,7 +69,22 @@ export default async function Page({
   } = currentExam;
 
   const formattedDate = format(new Date(updatedAt), "dd MMMM yyyy");
-  console.log("questions are", questions);
+
+  let transformedData = questions.map((question) => {
+    const options = JSON.parse(question.options as string);
+
+    return {
+      id: question.id,
+      question: question.question,
+      answer: question.answer,
+      option1: options[0].option1,
+      option2: options[1].option2,
+      option3: options[2].option3,
+      option4: options[3].option4,
+    };
+  });
+
+  console.log("transformed data is", transformedData);
 
   return (
     <section className="mx-auto block-space">
@@ -246,6 +150,7 @@ export default async function Page({
       </div>
       <div>
         <h3 className="text-center">Questions of {name}:-</h3>
+        <ClientQuestionTable data={transformedData} examId={params.examId} />
       </div>
     </section>
   );

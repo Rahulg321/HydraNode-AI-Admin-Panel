@@ -13,17 +13,27 @@ const saveExamQuestions = async (examId: string, questions: Question[]) => {
       let option1 = question.option1;
       let option2 = question.option2;
       let option3 = question.option3;
+      let option4 = question.option4;
 
-      let options = [answer, option1, option2, option3];
-      // shuffle the options array
-      console.log("the original array is", options);
-      shuffleArray(options);
-      console.log("the shuffled array is", options);
+      let options = [
+        {
+          option1,
+        },
+        {
+          option2,
+        },
+        {
+          option3,
+        },
+        {
+          option4,
+        },
+      ];
 
       return {
         question: questionString,
         answer,
-        options,
+        options: JSON.stringify(options),
         examId,
       };
     });

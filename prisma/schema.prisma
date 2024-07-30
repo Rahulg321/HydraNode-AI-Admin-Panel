@@ -93,7 +93,7 @@ model Question {
   question  String
   answer    String
   isCorrect Boolean? //for mcq question only
-  options   Json?
+  options   Json
 
   // the exam to which the questions belong to
   examId String?
