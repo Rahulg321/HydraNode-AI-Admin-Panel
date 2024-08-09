@@ -3,6 +3,8 @@ import { generateObject, JSONParseError, TypeValidationError } from "ai";
 import { z } from "zod";
 import { v4 as uuidv4 } from "uuid"; // Import the UUID package
 
+export const maxDuration = 60;
+
 const openai = createOpenAI({
   // custom settings, e.g.
   apiKey: "sk-proj-1vWWtUHA9qsAvQWELMoBT3BlbkFJ3qDHvvCXekXMW8v1gSAU",
@@ -65,6 +67,8 @@ export async function POST(req: Request) {
       }
     );
   } catch (error) {
+    console.error(error);
+
     if (TypeValidationError.isTypeValidationError(error)) {
       return new Response(
         JSON.stringify({
