@@ -33,6 +33,7 @@ import { columns } from "./columns";
 import { Question } from "@/lib/types";
 import saveExamQuestions from "@/app/actions/SaveExamQuestions";
 import { Textarea } from "@/components/ui/textarea";
+import GenerateQuestions from "@/app/actions/GenerateQuestions";
 
 function getExamId(pathname: string) {
   const parts = pathname.split("/");
@@ -99,34 +100,27 @@ const GenerateQuestionsPage = () => {
     console.log("submitted values are", values);
     startTransition(async () => {
       // await for 3 sec
-      try {
-        const response = await axios.post("/api/generate-questions", {
-          values,
-        });
 
-        if (response.status !== 200) {
-          throw new Error(
-            "Bad Request!! Error occurred while generating questions"
-          );
-        }
-
+      const response = await GenerateQuestions(values);
+      if (response.success) {
         console.log("response after sending request is ", response);
-        console.log("questions are ", response.data.questions);
+        console.log("questions are ", response.questions);
 
         setQuestions((prevQuestions) => [
           ...prevQuestions,
-          ...response.data.questions,
+          ...response.questions,
         ]);
 
         toast({
           variant: "success",
-          description: "Questions generated successfully",
+          description: "successfully generated Questions",
         });
-      } catch (error) {
-        console.log("error occurred", error);
+      }
+
+      if (response.error) {
         toast({
           variant: "destructive",
-          description: "Error occurred while generating questions",
+          description: response.error || "Error Generating Questions",
         });
       }
     });
