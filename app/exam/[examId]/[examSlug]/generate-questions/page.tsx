@@ -32,6 +32,7 @@ import { DataTable } from "./data-table";
 import { columns } from "./columns";
 import { Question } from "@/lib/types";
 import saveExamQuestions from "@/app/actions/SaveExamQuestions";
+import { Textarea } from "@/components/ui/textarea";
 
 function getExamId(pathname: string) {
   const parts = pathname.split("/");
@@ -51,6 +52,7 @@ const GenerateQuestionsPage = () => {
     resolver: zodResolver(GenerateQuestionFormSchema),
     defaultValues: {
       topic: "",
+      description: "",
       difficulty: "EASY",
       numberOfQuestions: 1,
     },
@@ -108,6 +110,7 @@ const GenerateQuestionsPage = () => {
           );
         }
 
+        console.log("response after sending request is ", response);
         console.log("questions are ", response.data.questions);
 
         setQuestions((prevQuestions) => [
@@ -140,9 +143,12 @@ const GenerateQuestionsPage = () => {
         Back to Exam
       </Button>
       <div className="narrow-container">
-        <h1>Generate Questions</h1>
+        <h1 className="mb-12 text-center">Generate Questions</h1>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-4 mb-12"
+          >
             <FormField
               control={form.control}
               name="topic"
@@ -153,6 +159,28 @@ const GenerateQuestionsPage = () => {
                     <Input placeholder="cloud engineer..." {...field} />
                   </FormControl>
                   <FormDescription>Enter a topic name.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Topic Decription</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      {...field}
+                      placeholder="describe the topic......."
+                      rows={10}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Write a small description for the topic so that the AI model
+                    can have better context.
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -217,7 +245,7 @@ const GenerateQuestionsPage = () => {
         </Form>
       </div>
       <div className="mt-12">
-        <h2>Generated Questions:</h2>
+        <h2>Generated Questions Using AI:</h2>
 
         <DataTable columns={generateQuestionsColumns} data={questions} />
 

@@ -41,6 +41,11 @@ const page = async ({
 
   return (
     <section className="block-space">
+      <div className="absolute top-12 right-12">
+        <Button asChild>
+          <Link href={`/`}>Back to Vendors</Link>
+        </Button>
+      </div>
       <div className="absolute top-8 left-12">
         <CreateExamDialog examType={examType} />
       </div>
