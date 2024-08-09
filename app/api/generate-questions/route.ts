@@ -1,9 +1,6 @@
-import { GenerateQuestionFormSchema } from "@/app/schemas/GenerateQuestionFormSchema";
-import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { createOpenAI } from "@ai-sdk/openai";
 import { generateObject, JSONParseError, TypeValidationError } from "ai";
-import { NextResponse } from "next/server";
-import { z, ZodError } from "zod";
+import { z } from "zod";
 import { v4 as uuidv4 } from "uuid"; // Import the UUID package
 
 const openai = createOpenAI({
@@ -23,21 +20,12 @@ const MCQ_QUESTION_SCHEMA = z.object({
 
 type MCQ_QUESTIONS = z.infer<typeof MCQ_QUESTION_SCHEMA>;
 
-export async function GET(req: Request) {
-  console.log("Calling the GET route");
-  return NextResponse.json({
-    status: 200,
-  });
-}
-
 export async function POST(req: Request) {
   console.log("Calling the POST route");
 
   try {
     const body = await req.json();
-    console.log("recieved body is ", body);
-    // const { numberOfQuestions, topic, difficulty } =
-    //   GenerateQuestionFormSchema.parse(body.values);
+    console.log("Received body is ", body);
     const { numberOfQuestions, topic, difficulty, description } = body.values;
     console.log("numberOfQuestions is", numberOfQuestions);
     console.log("topic is", topic);
@@ -50,7 +38,7 @@ export async function POST(req: Request) {
       const result = await generateObject({
         model: openai("gpt-4-turbo"),
         temperature: 0.9,
-        prompt: `You are an helpful AI assistant that is able to generate mcq questions and answers, the length of each answer should not exceed 15 words, store all the pairs of questions and answers in an JSON array. You are to generate a random ${difficulty} question about the topic ${topic} with the additional description ${description}. Make sure that each question generated is unique and different from each other.`,
+        prompt: `You are a helpful AI assistant that is able to generate mcq questions and answers. The length of each answer should not exceed 15 words. Store all the pairs of questions and answers in a JSON array. You are to generate a random ${difficulty} question about the topic ${topic} with the additional description ${description}. Make sure that each question generated is unique and different from each other.`,
         schema: MCQ_QUESTION_SCHEMA,
       });
 
@@ -59,28 +47,57 @@ export async function POST(req: Request) {
         id: uuidv4(), // Assign a unique UUID
       };
 
-      console.log("question generated each loop", questionWithId);
+      console.log("Question generated in each loop:", questionWithId);
       questions.push(questionWithId);
     }
 
-    console.log("generated questions are", questions);
+    console.log("Generated questions are:", questions);
 
-    return NextResponse.json(
-      {
+    // Return a native Response object
+    return new Response(
+      JSON.stringify({
         questions,
         type: "success",
-      },
+      }),
       {
         status: 200,
+        headers: { "Content-Type": "application/json" },
       }
     );
   } catch (error) {
     if (TypeValidationError.isTypeValidationError(error)) {
-      return { type: "validation-error", value: error.value };
+      return new Response(
+        JSON.stringify({
+          type: "validation-error",
+          value: error.value,
+        }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     } else if (JSONParseError.isJSONParseError(error)) {
-      return { type: "parse-error", text: error.text };
+      return new Response(
+        JSON.stringify({
+          type: "parse-error",
+          text: error.text,
+        }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     } else {
-      return { type: "unknown-error", error };
+      return new Response(
+        JSON.stringify({
+          type: "unknown-error",
+          error: error,
+        }),
+        {
+          status: 500,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     }
   }
 }
