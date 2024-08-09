@@ -2,8 +2,11 @@ import { createOpenAI } from "@ai-sdk/openai";
 import { generateObject, JSONParseError, TypeValidationError } from "ai";
 import { z } from "zod";
 import { v4 as uuidv4 } from "uuid"; // Import the UUID package
+import exp from "constants";
 
 export const maxDuration = 60;
+export const runtime = "edge";
+export const dynamic = "force-dynamic";
 
 const openai = createOpenAI({
   // custom settings, e.g.
