@@ -27,10 +27,10 @@ import {
 import { Trash2 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import DeleteExamVendorButton from "@/components/DeleteExamVendorButton";
-import { ExamType } from "@prisma/client";
+import { Vendor } from "@prisma/client";
 
 export default async function Home() {
-  const examTypes = await db.examType.findMany();
+  const vendors = await db.vendor.findMany();
 
   return (
     <section className="block-space">
@@ -41,15 +41,15 @@ export default async function Home() {
             Admin Panel
           </span>
         </h1>
-        <h2>All Exam Types are {examTypes.length}</h2>
+        <h2>All Exam Types are {vendors.length}</h2>
       </div>
       <div className="absolute top-10 left-12">
         <CreateExamTypeDialog />
       </div>
       <ul className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {examTypes.map((examType) => (
-          <li key={examType.id}>
-            <ExamTypeCard examType={examType} />
+        {vendors.map((vendor) => (
+          <li key={vendor.id}>
+            <ExamTypeCard vendor={vendor} />
           </li>
         ))}
       </ul>
@@ -57,16 +57,16 @@ export default async function Home() {
   );
 }
 
-function ExamTypeCard({ examType }: { examType: ExamType }) {
-  const formattedDate = format(new Date(examType.updatedAt), "dd MMMM yyyy");
+function ExamTypeCard({ vendor }: { vendor: Vendor }) {
+  const formattedDate = format(new Date(vendor.updatedAt), "dd MMMM yyyy");
   return (
     <Card>
       <CardHeader className="relative bg-muted rounded-b-md">
-        <CardTitle>{examType.name}</CardTitle>
+        <CardTitle>{vendor.name}</CardTitle>
         <CardDescription className="font-semibold">
           Updated At: {formattedDate}
         </CardDescription>
-        <DeleteExamVendorButton vendorId={examType.id} />
+        <DeleteExamVendorButton vendorId={vendor.id} />
       </CardHeader>
       <CardContent className="p-4">
         <h5 className="font-bold">Exam Details</h5>
@@ -82,7 +82,7 @@ function ExamTypeCard({ examType }: { examType: ExamType }) {
       </CardContent>
       <CardFooter className="flex flex-col gap-4">
         <Button className=" w-full" asChild>
-          <Link href={`/examType/${examType.slug}`}>
+          <Link href={`/vendor/${vendor.slug}`}>
             View Details <ArrowTopRightIcon className="ml-2 h-4 w-4" />
           </Link>
         </Button>

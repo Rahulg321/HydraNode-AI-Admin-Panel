@@ -36,7 +36,7 @@ export default async function Page({
           options: true,
         },
       },
-      examType: {
+      vendor: {
         select: {
           name: true,
           slug: true,
@@ -57,7 +57,7 @@ export default async function Page({
     questions,
     attempts,
     examLevel,
-    examType,
+    vendor,
     updatedAt,
   } = currentExam;
 
@@ -82,17 +82,16 @@ export default async function Page({
   return (
     <section className="mx-auto block-space">
       <div className="absolute top-10 left-12">
-        <Button asChild>
+        <Button asChild className="mr-4">
           <Link href={`/exam/${id}/${slug}/generate-questions`}>
             Generate Questions
           </Link>
         </Button>
-      </div>
-      <div className="absolute top-12 right-12">
         <Button asChild>
-          <Link href={`/examType/${examType.slug}`}>Back to All Exams</Link>
+          <Link href={`/vendor/${vendor.slug}`}>Back to All Exams</Link>
         </Button>
       </div>
+
       <div className="text-center mb-12">
         <h1>{name}</h1>
       </div>
@@ -131,7 +130,7 @@ export default async function Page({
               <div className="text-muted-foreground font-semibold">
                 Vendor Name
               </div>
-              <div className="font-semibold">{examType.name}</div>
+              <div className="font-semibold">{vendor.name}</div>
             </div>
           </CardContent>
           <CardFooter>

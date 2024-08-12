@@ -11,8 +11,8 @@ import { revalidatePath } from "next/cache";
 
 const createExam = async (
   values: CreateExamFormZodType,
-  examTypeId: string,
-  examTypeSlug: string
+  vendorId: string,
+  vendorSlug: string
 ) => {
   try {
     // validate fields on the server
@@ -35,12 +35,12 @@ const createExam = async (
         slug: slugValue,
         examLevel: ExamLevel,
         attempts: numberOfAttempts,
-        examTypeId,
+        vendorId,
         timeAllowed,
       },
     });
 
-    revalidatePath(`examType/${examTypeSlug}`);
+    revalidatePath(`vendor/${vendorSlug}`);
 
     return {
       success: "successfully created exam",

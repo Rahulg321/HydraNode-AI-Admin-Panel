@@ -23,38 +23,36 @@ const page = async ({
   params,
 }: {
   params: {
-    examId: string;
+    vendorId: string;
   };
 }) => {
-  const examType = await db.examType.findUnique({
+  const vendor = await db.vendor.findUnique({
     where: {
-      slug: params.examId,
+      slug: params.vendorId,
     },
     include: {
       exams: true,
     },
   });
 
-  if (!examType) {
+  if (!vendor) {
     return notFound();
   }
 
   return (
     <section className="block-space">
-      <div className="absolute top-12 right-12">
-        <Button asChild>
+      <div className="absolute top-8 left-12">
+        <CreateExamDialog vendor={vendor} />
+        <Button asChild className="ml-4">
           <Link href={`/`}>Back to Vendors</Link>
         </Button>
       </div>
-      <div className="absolute top-8 left-12">
-        <CreateExamDialog examType={examType} />
-      </div>
       <div className="text-center mb-12">
-        <h1>{examType?.name}</h1>
+        <h1>{vendor?.name}</h1>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {examType?.exams.map((exam) => (
-          <ExamCard key={exam.id} exam={exam} examTypeSlug={examType.slug} />
+        {vendor?.exams.map((exam) => (
+          <ExamCard key={exam.id} exam={exam} vendorSlug={vendor.slug} />
         ))}
       </div>
     </section>
@@ -63,13 +61,7 @@ const page = async ({
 
 export default page;
 
-function ExamCard({
-  exam,
-  examTypeSlug,
-}: {
-  exam: Exam;
-  examTypeSlug: string;
-}) {
+function ExamCard({ exam, vendorSlug }: { exam: Exam; vendorSlug: string }) {
   const formattedDate = format(new Date(exam.updatedAt), "dd MMMM yyyy");
   return (
     <Card>
@@ -81,7 +73,7 @@ function ExamCard({
 
         <div className="absolute top-2 right-2">
           <DeleteExamDialog
-            examTypeSlug={examTypeSlug}
+            examTypeSlug={vendorSlug}
             examId={exam.id}
             examName={exam.name}
           />

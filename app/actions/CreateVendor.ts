@@ -28,7 +28,7 @@ export const createVendor = async (values: VendorFormZodType) => {
     console.log("vendorName", vendorName);
     console.log("vendorSlugValue", vendorSlugValue);
 
-    await db.examType.create({
+    await db.vendor.create({
       data: {
         name: vendorName,
         slug: vendorSlugValue,

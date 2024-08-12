@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 
 export const deleteExamVendor = async (id: string) => {
   try {
-    await db.examType.delete({
+    await db.vendor.delete({
       where: {
         id,
       },

@@ -10,9 +10,9 @@ import {
 import { Button } from "./ui/button";
 import { PlusCircleIcon } from "lucide-react";
 import CreateExamForm from "./forms/CreateExamForm";
-import { ExamType } from "@prisma/client";
+import { Vendor } from "@prisma/client";
 
-const CreateExamDialog = ({ examType }: { examType: ExamType }) => {
+const CreateExamDialog = ({ vendor }: { vendor: Vendor }) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -22,16 +22,13 @@ const CreateExamDialog = ({ examType }: { examType: ExamType }) => {
       </DialogTrigger>
       <DialogContent className="max-w-3xl">
         <DialogHeader>
-          <DialogTitle>Create an Exam for {examType.name}</DialogTitle>
+          <DialogTitle>Create an Exam for {vendor.name}</DialogTitle>
           <DialogDescription>
             Create a new Exam containing AI generated questions for Vendor{" "}
-            {examType.name}. Click submit when done.
+            {vendor.name}. Click submit when done.
           </DialogDescription>
           <div className="mt-4">
-            <CreateExamForm
-              examTypeId={examType.id}
-              examTypeSlug={examType.slug}
-            />
+            <CreateExamForm vendorId={vendor.id} vendorSlug={vendor.slug} />
           </div>
         </DialogHeader>
       </DialogContent>

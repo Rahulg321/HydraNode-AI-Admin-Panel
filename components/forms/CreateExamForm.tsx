@@ -29,11 +29,11 @@ import {
 import createExam from "@/app/actions/CreateExam";
 
 const CreateExamForm = ({
-  examTypeId,
-  examTypeSlug,
+  vendorId,
+  vendorSlug,
 }: {
-  examTypeId: string;
-  examTypeSlug: string;
+  vendorId: string;
+  vendorSlug: string;
 }) => {
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
@@ -52,7 +52,7 @@ const CreateExamForm = ({
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     startTransition(async () => {
-      const reponse = await createExam(values, examTypeId, examTypeSlug);
+      const reponse = await createExam(values, vendorId, vendorSlug);
       if (reponse.success) {
         toast({
           variant: "success",

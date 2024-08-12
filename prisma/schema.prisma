@@ -1,3 +1,7 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -5,10 +9,6 @@ datasource db {
 
 // command to run a docker for connecting postgres
 // docker run -d -e POSTGRES_DB=mydb -e POSTGRES_PASSWORD=testpass123 -e POSTGRES_USER=postgres -p "6500:5432" postgres
-
-generator client {
-  provider = "prisma-client-js"
-}
 
 model User {
   id            String    @id @default(cuid())
@@ -22,8 +22,16 @@ model User {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  quiz      Quiz[]
-  quizId    String?
+
+  profile      Profile?
+  quizSessions QuizSession[]
+}
+
+model Profile {
+  id     Int    @id @default(autoincrement())
+  bio    String
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @unique
 }
 
 model Account {
@@ -48,12 +56,11 @@ model Account {
 }
 
 // exam type means the vendor that the exams belong to
-model ExamType {
+model Vendor {
   id        String   @id @default(cuid())
   name      String   @unique
   slug      String   @unique
   exams     Exam[]
-  examCount Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -66,41 +73,62 @@ enum ExamLevel {
 
 // each individual exam, it can belong to a vendor
 model Exam {
-  id          String     @id @default(cuid())
+  id          String        @id @default(cuid())
   name        String
-  slug        String     @unique
-  examTypeId  String
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  slug        String        @unique
+  vendorId    String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
   timeAllowed Int
   attempts    Int
-  examType    ExamType   @relation(fields: [examTypeId], references: [id], onDelete: Cascade)
-  examLevel   ExamLevel  @default(ASSOCIATE)
+  vendor      Vendor        @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  examLevel   ExamLevel
   questions   Question[]
+  QuizSession QuizSession[]
 }
 
-model Quiz {
-  id        String     @id @default(cuid())
+model QuizSession {
+  id        String    @id @default(cuid())
   userId    String
-  topic     String
-  timeEnded DateTime?
-  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  questions Question[]
+  examId    String
+  startTime DateTime
+  endTime   DateTime?
 
-  @@index([userId], name: "userId")
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exam         Exam          @relation(fields: [examId], references: [id], onDelete: Cascade)
+  userAttempts UserAttempt[]
+
+  createdAt DateTime @default(now())
+}
+
+model UserAttempt {
+  id            String  @id @default(cuid())
+  quizSessionId String
+  questionId    String
+  userAnswer    String
+  isCorrect     Boolean
+
+  quizSession QuizSession @relation(fields: [quizSessionId], references: [id], onDelete: Cascade)
+  question    Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
 }
 
 model Question {
-  id        String   @id @default(cuid())
+  id        String       @id @default(cuid())
   question  String
   answer    String
-  isCorrect Boolean? //for mcq question only
+  isCorrect Boolean? // for MCQ questions only
   options   Json
+  type      QuestionType @default(MCQ) // New field to handle different question types
 
-  // the exam to which the questions belong to
-  examId String?
-  Exam   Exam?   @relation(fields: [examId], references: [id])
+  examId      String
+  exam        Exam          @relation(fields: [examId], references: [id], onDelete: Cascade)
+  UserAttempt UserAttempt[]
+}
 
-  Quiz   Quiz?   @relation(fields: [quizId], references: [id])
-  quizId String?
+enum QuestionType {
+  MCQ
+  TRUE_FALSE
+  SHORT_ANSWER
 }
