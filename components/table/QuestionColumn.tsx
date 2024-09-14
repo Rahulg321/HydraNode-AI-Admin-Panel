@@ -1,7 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { CloudLightning, MoreHorizontal, Trash2Icon } from "lucide-react";
+import { MoreHorizontal, Trash2Icon } from "lucide-react";
 import { ArrowUpDown } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -16,9 +16,6 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast, useToast } from "../ui/use-toast";
 import { QuestionType } from "@prisma/client";
-// import { Question } from "@prisma/client";
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
 
 export type QuestionWithDetails = {
   id: string;
@@ -39,77 +36,80 @@ type ColumnProps = {
 export const QuestionColumns = ({
   onEdit,
   onDelete,
-}: ColumnProps): ColumnDef<QuestionWithDetails>[] => [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "question",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Question
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
+}: ColumnProps): ColumnDef<QuestionWithDetails>[] => {
+  // Static columns like select, question, type, and correct answers
+  const baseColumns: ColumnDef<QuestionWithDetails>[] = [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
     },
-  },
-  {
-    accessorKey: "type",
-    header: "Type",
-  },
-  {
-    accessorKey: "correctAnswers",
-    header: "Correct Answers",
-    cell: ({ row }) => (
-      <div className="gap-2">
-        {row.original.correctAnswers.map((answer, idx) => (
-          <span key={idx} className="text-sm text-green-500 odd:mr-2">
-            {answer.answer}
-          </span>
-        ))}
-      </div>
-    ), // Display all correct answers
-  },
-  {
-    accessorKey: "options",
-    header: "Options",
-    cell: ({ row }) => (
-      <div>
-        {row.original.options.map((option, idx) => (
-          <div key={idx}>
-            <strong>Option {idx + 1}: </strong>
-            <span>{option.option}</span>
-            <br />
-            <small>Explanation: {option.explanation}</small>
-          </div>
-        ))}
-      </div>
-    ), // Display options and their explanations
-  },
-  {
+    {
+      accessorKey: "question",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Question
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+    },
+    {
+      accessorKey: "type",
+      header: "Type",
+    },
+    {
+      accessorKey: "correctAnswers",
+      header: "Correct Answers",
+      cell: ({ row }) => (
+        <div className="gap-2">
+          {row.original.correctAnswers.map((answer, idx) => (
+            <span key={idx} className="text-sm text-green-500 odd:mr-2">
+              {answer.answer}
+            </span>
+          ))}
+        </div>
+      ), // Display all correct answers
+    },
+  ];
+
+  // Dynamically add columns for each option
+  const optionColumns = Array.from({ length: 6 }, (_, idx) => ({
+    accessorKey: `options[${idx}].option`,
+    header: `Option ${idx + 1}`,
+    cell: ({ row }: { row: { original: QuestionWithDetails } }) =>
+      row.original.options[idx] ? (
+        <div>
+          <span>{row.original.options[idx].option}</span>
+          <br />
+          <small>Explanation: {row.original.options[idx].explanation}</small>
+        </div>
+      ) : null,
+  }));
+
+  // Add actions column
+  const actionsColumn: ColumnDef<QuestionWithDetails> = {
     id: "actions",
     cell: ({ row }) => {
       const questionCell = row.original;
@@ -145,5 +145,8 @@ export const QuestionColumns = ({
         </DropdownMenu>
       );
     },
-  },
-];
+  };
+
+  // Combine static columns, option columns, and actions column
+  return [...baseColumns, ...optionColumns, actionsColumn];
+};

@@ -56,7 +56,7 @@ export default async function Page({
 
   return (
     <section className="mx-auto block-space">
-      <div className="absolute top-10 left-12">
+      <div className="flex gap-4 items-center mb-6 md:mb-8 ">
         <Button asChild className="mr-4">
           <Link href={`/exam/${id}/${slug}/generate-questions`}>
             Generate Questions
