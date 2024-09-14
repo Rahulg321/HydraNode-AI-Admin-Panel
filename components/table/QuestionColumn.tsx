@@ -14,20 +14,32 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Question } from "@/lib/types";
 import { toast, useToast } from "../ui/use-toast";
+import { QuestionType } from "@prisma/client";
+// import { Question } from "@prisma/client";
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 
+export type QuestionWithDetails = {
+  id: string;
+  question: string;
+  type: QuestionType;
+  overallExplanation: string;
+  examId: string;
+  createdAt: Date;
+  options: Array<{ option: string; explanation: string }>; // Array of options with explanations
+  correctAnswers: Array<{ answer: string }>; // Array of correct answers
+};
+
 type ColumnProps = {
-  onEdit: (question: Question) => void;
+  onEdit: (question: QuestionWithDetails) => void;
   onDelete: (id: string) => void;
 };
 
 export const QuestionColumns = ({
   onEdit,
   onDelete,
-}: ColumnProps): ColumnDef<Question>[] => [
+}: ColumnProps): ColumnDef<QuestionWithDetails>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -65,24 +77,37 @@ export const QuestionColumns = ({
     },
   },
   {
-    accessorKey: "answer",
-    header: "Answer",
+    accessorKey: "type",
+    header: "Type",
   },
   {
-    accessorKey: "option1",
-    header: "Option1",
+    accessorKey: "correctAnswers",
+    header: "Correct Answers",
+    cell: ({ row }) => (
+      <div className="gap-2">
+        {row.original.correctAnswers.map((answer, idx) => (
+          <span key={idx} className="text-sm text-green-500 odd:mr-2">
+            {answer.answer}
+          </span>
+        ))}
+      </div>
+    ), // Display all correct answers
   },
   {
-    accessorKey: "option2",
-    header: "Option2",
-  },
-  {
-    accessorKey: "option3",
-    header: "Option3",
-  },
-  {
-    accessorKey: "option4",
-    header: "Option4",
+    accessorKey: "options",
+    header: "Options",
+    cell: ({ row }) => (
+      <div>
+        {row.original.options.map((option, idx) => (
+          <div key={idx}>
+            <strong>Option {idx + 1}: </strong>
+            <span>{option.option}</span>
+            <br />
+            <small>Explanation: {option.explanation}</small>
+          </div>
+        ))}
+      </div>
+    ), // Display options and their explanations
   },
   {
     id: "actions",

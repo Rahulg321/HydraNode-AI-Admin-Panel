@@ -10,7 +10,6 @@ import {
 import { Button } from "./ui/button";
 import { HardHatIcon, PlusCircleIcon } from "lucide-react";
 import CreateExamForm from "./forms/CreateExamForm";
-import { ExamType } from "@prisma/client";
 
 const GenerateQuestionsDialog = ({}: {}) => {
   return (

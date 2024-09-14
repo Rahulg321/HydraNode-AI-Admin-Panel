@@ -1,35 +1,37 @@
 "use client";
 
 import deleteSingleQuestion from "@/app/actions/DeleteSingleQuestion";
-import EditQuestionDialog from "@/components/EditQuestionDialog";
-import { QuestionColumns } from "@/components/table/QuestionColumn";
+import {
+  QuestionColumns,
+  QuestionWithDetails,
+} from "@/components/table/QuestionColumn";
 import { QuestionDataTable } from "@/components/table/QuestionDataTable";
 import { useToast } from "@/components/ui/use-toast";
-import { Question } from "@/lib/types";
+import { Question } from "@prisma/client";
 import React, { useState } from "react";
 
 const ClientQuestionTable = ({
   data,
   examId,
 }: {
-  data: Question[];
+  data: QuestionWithDetails[];
   examId: string;
 }) => {
   const { toast } = useToast();
   const [editDialog, setEditDialog] = useState(false);
-  const [question, setQuestion] = useState<Question>({
-    id: "",
-    question: "",
-    answer: "",
-    option1: "",
-    option2: "",
-    option3: "",
-    option4: "",
-  });
+  // const [question, setQuestion] = useState<Question>({
+  //   id: "",
+  //   question: "",
+  //   answer: "",
+  //   option1: "",
+  //   option2: "",
+  //   option3: "",
+  //   option4: "",
+  // });
 
-  const onEdit = (recievedQuestion: Question) => {
+  const onEdit = (recievedQuestion: QuestionWithDetails) => {
     console.log("clicked the edit button", recievedQuestion);
-    setQuestion(recievedQuestion);
+    // setQuestion(recievedQuestion);
     setEditDialog(true);
   };
 
@@ -57,12 +59,12 @@ const ClientQuestionTable = ({
   return (
     <div>
       <QuestionDataTable columns={updatedQuestionColumns} data={data} />
-      <EditQuestionDialog
+      {/* <EditQuestionDialog
         dialogOpen={editDialog}
         dialogOpenChange={setEditDialog}
         question={question}
         examId={examId}
-      />
+      /> */}
     </div>
   );
 };

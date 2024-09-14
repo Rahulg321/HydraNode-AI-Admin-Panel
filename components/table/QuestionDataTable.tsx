@@ -1,5 +1,7 @@
 "use client";
+
 import * as React from "react";
+
 import {
   ColumnDef,
   flexRender,
@@ -12,7 +14,9 @@ import {
   SortingState,
   getPaginationRowModel,
 } from "@tanstack/react-table";
+
 import { Input } from "@/components/ui/input";
+
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,

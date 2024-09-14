@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 import ClientQuestionTable from "./ClientQuestionTable";
+import BulkUploadQuestionsDialog from "@/components/BulkUploadQuestionsDialog";
 
 export default async function Page({
   params,
@@ -23,25 +24,14 @@ export default async function Page({
     examSlug: string;
   };
 }) {
+  const { examId, examSlug } = params;
+
   const currentExam = await db.exam.findUnique({
     where: {
-      id: params.examId,
+      id: examId,
     },
     include: {
-      questions: {
-        select: {
-          id: true,
-          question: true,
-          answer: true,
-          options: true,
-        },
-      },
-      vendor: {
-        select: {
-          name: true,
-          slug: true,
-        },
-      },
+      vendor: true,
     },
   });
 
@@ -49,35 +39,20 @@ export default async function Page({
     return notFound();
   }
 
-  const {
-    id,
-    name,
-    slug,
-    timeAllowed,
-    questions,
-    attempts,
-    examLevel,
-    vendor,
-    updatedAt,
-  } = currentExam;
-
-  const formattedDate = format(new Date(updatedAt), "dd MMMM yyyy");
-
-  let transformedData = questions.map((question) => {
-    const options = JSON.parse(question.options as string);
-
-    return {
-      id: question.id,
-      question: question.question,
-      answer: question.answer,
-      option1: options[0].option1,
-      option2: options[1].option2,
-      option3: options[2].option3,
-      option4: options[3].option4,
-    };
+  const questions = await db.question.findMany({
+    where: {
+      examId: examId,
+    },
+    include: {
+      options: true,
+      correctAnswers: true,
+    },
   });
 
-  console.log("transformed data is", transformedData);
+  console.log("questions are", questions);
+
+  const { id, slug, timeAllowed, attempts, examLevel, name, vendor } =
+    currentExam;
 
   return (
     <section className="mx-auto block-space">
@@ -90,15 +65,14 @@ export default async function Page({
         <Button asChild>
           <Link href={`/vendor/${vendor.slug}`}>Back to All Exams</Link>
         </Button>
+        <BulkUploadQuestionsDialog examId={id} />
       </div>
 
       <div className="text-center mb-12">
         <h1>{name}</h1>
+        <h2>Total Questions:- {questions.length}</h2>
       </div>
       <div className="mb-12 narrow-container">
-        <span className="text-muted-foreground block font-semibold mb-2">
-          Last Updated: {formattedDate}
-        </span>
         <Card>
           <CardHeader>
             <CardTitle>{name}</CardTitle>
@@ -147,7 +121,7 @@ export default async function Page({
       </div>
       <div>
         <h3 className="text-center">Questions of {name}:-</h3>
-        <ClientQuestionTable data={transformedData} examId={params.examId} />
+        <ClientQuestionTable data={questions} examId={params.examId} />
       </div>
     </section>
   );
