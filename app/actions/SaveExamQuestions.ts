@@ -38,11 +38,11 @@ const saveExamQuestions = async (examId: string, questions: Question[]) => {
       };
     });
 
-    await db.question.createMany({
-      data: manyData,
-    });
+    // await db.question.createMany({
+    //   data: manyData,
+    // });
 
-    revalidatePath(`/exam/${examId}`);
+    // revalidatePath(`/exam/${examId}`);
 
     return {
       success: "successfully saved questions",
