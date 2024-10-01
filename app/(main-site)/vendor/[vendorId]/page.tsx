@@ -41,7 +41,7 @@ const page = async ({
 
   return (
     <section className="block-space">
-      <div className="absolute top-8 left-12">
+      <div className="">
         <CreateExamDialog vendor={vendor} />
         <Button asChild className="ml-4">
           <Link href={`/`}>Back to Vendors</Link>

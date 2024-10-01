@@ -43,7 +43,7 @@ export default async function Home() {
         </h1>
         <h2>All Exam Types are {vendors.length}</h2>
       </div>
-      <div className="absolute top-10 left-12">
+      <div className="">
         <CreateExamTypeDialog />
       </div>
       <ul className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
