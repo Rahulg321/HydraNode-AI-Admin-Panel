@@ -36,7 +36,7 @@ export default async function Home() {
     <section className="block-space">
       <div className="text-center space-y-2 mb-12">
         <h1>
-          Hydra Node{" "}
+          Welcome to Hydra Node{" "}
           <span className="via-[#AF89EE]/80.89% bg-gradient-to-r from-[#AF89EE] to-[#5153D7] bg-clip-text text-transparent">
             Admin Panel
           </span>

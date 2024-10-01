@@ -98,6 +98,10 @@
   }
 }
 
+html {
+  font-family: var(--font-geist-sans);
+}
+
 .big-container {
   margin-inline: auto;
   width: min(90%, 80.5rem);

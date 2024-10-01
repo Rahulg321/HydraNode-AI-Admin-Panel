@@ -55,7 +55,6 @@ const BulkUploadQuestionsButton = ({ examId }: { examId: string }) => {
             // Parse the CSV file using PapaParse
             const parsedData = Papa.parse(text, { header: true });
 
-            console.log("Parsed CSV Data:", parsedData.data.slice(0, 5));
             const response = await bulkUploadQuestionsFromCSV(
               examId,
               parsedData.data as BaseQuestion[]
