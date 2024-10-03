@@ -58,6 +58,7 @@ const CreateExamForm = ({
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     startTransition(async () => {
+      console.log("values are ", values);
       const reponse = await createExam(values, vendorId, vendorSlug);
       if (reponse.success) {
         toast({
@@ -142,7 +143,7 @@ const CreateExamForm = ({
         />
         <FormField
           control={form.control}
-          name="numberOfAttempts"
+          name="price"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Price for Exam</FormLabel>

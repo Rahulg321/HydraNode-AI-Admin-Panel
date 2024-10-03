@@ -20,10 +20,12 @@ const DeleteExamDialog = ({
   examTypeSlug,
   examId,
   examName,
+  stripeProductId,
 }: {
   examTypeSlug: string;
   examId: string;
   examName: string;
+  stripeProductId: string;
 }) => {
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
@@ -31,7 +33,7 @@ const DeleteExamDialog = ({
 
   const buttonClickHandler = () => {
     startTransition(async () => {
-      const response = await deleteExam(examId, examTypeSlug);
+      const response = await deleteExam(examId, examTypeSlug, stripeProductId);
       if (response.success) {
         toast({
           variant: "success",

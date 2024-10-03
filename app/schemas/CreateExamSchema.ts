@@ -23,12 +23,10 @@ export const CreateExamFormSchema = z.object({
       message: "Questions to Show must be at least 1.",
     })
     .int("Price must be an integer."),
-  price: z.coerce
-    .number()
-    .min(1, {
-      message: "Price must be at least 1.",
-    })
-    .int("Price must be an integer."),
+  price: z.coerce.number().min(0.01, {
+    message: "Price must be a positive value.",
+  }),
+
   numberOfAttempts: z.coerce
     .number()
     .min(1, {

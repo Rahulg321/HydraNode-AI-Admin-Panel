@@ -18,6 +18,16 @@ import DeleteExamVendorButton from "@/components/DeleteExamVendorButton";
 import DeleteExamDialog from "@/components/DeleteExamDialog";
 import { Exam } from "@prisma/client";
 import { format } from "date-fns";
+import PreviousPageButton from "@/components/PreviousPageButton";
+import {
+  BookOpenIcon,
+  CalendarIcon,
+  Clock10Icon,
+  DollarSignIcon,
+  FileTextIcon,
+  LayersIcon,
+  Repeat1Icon,
+} from "lucide-react";
 
 const page = async ({
   params,
@@ -41,11 +51,9 @@ const page = async ({
 
   return (
     <section className="block-space">
-      <div className="">
+      <div className="flex items-center gap-4">
+        <PreviousPageButton />
         <CreateExamDialog vendor={vendor} />
-        <Button asChild className="ml-4">
-          <Link href={`/`}>Back to Vendors</Link>
-        </Button>
       </div>
       <div className="text-center mb-12">
         <h1>{vendor?.name}</h1>
@@ -65,46 +73,68 @@ function ExamCard({ exam, vendorSlug }: { exam: Exam; vendorSlug: string }) {
   const formattedDate = format(new Date(exam.updatedAt), "dd MMMM yyyy");
   return (
     <Card>
-      <CardHeader className="relative bg-muted rounded-b-md">
-        <CardTitle>{exam.name}</CardTitle>
-        <CardDescription className="font-semibold">
-          Last Updated At: {formattedDate}
-        </CardDescription>
-
+      <CardHeader className="relative rounded-b-md">
+        <CardTitle className="font-bold">{exam.name}</CardTitle>
+        <CardDescription>{exam.description}</CardDescription>
         <div className="absolute top-2 right-2">
           <DeleteExamDialog
             examTypeSlug={vendorSlug}
             examId={exam.id}
             examName={exam.name}
+            stripeProductId={exam.stripeProductId!}
           />
         </div>
       </CardHeader>
-      <CardContent className="p-4">
-        <h5 className="font-bold">Exam Details</h5>
-        <Separator className="mb-4 mt-2" />
-        <div className="space-y-3">
-          <div className="flex justify-between">
-            <div className="text-muted-foreground font-semibold">
-              Total Time Allowed
+      <CardContent className="">
+        <div className="space-y-4">
+          {/* Exam Price */}
+          <div className="flex justify-between items-center">
+            <div className="flex items-center space-x-2 text-muted-foreground font-semibold">
+              <DollarSignIcon className="w-5 h-5" />
+              <span>Exam Price</span>
             </div>
-            <div className="font-semibold">{exam.timeAllowed}</div>
+            <div className="font-semibold">${exam.price}</div>
           </div>
-          <div className="flex justify-between">
-            <div className="text-muted-foreground font-semibold">
-              Exam Level
+
+          {/* Questions to Show */}
+          <div className="flex justify-between items-center">
+            <div className="flex items-center space-x-2 text-muted-foreground font-semibold">
+              <FileTextIcon className="w-5 h-5" />
+              <span>Questions to Show</span>
+            </div>
+            <div className="font-semibold">{exam.questionsToShow}</div>
+          </div>
+
+          {/* Total Time Allowed */}
+          <div className="flex justify-between items-center">
+            <div className="flex items-center space-x-2 text-muted-foreground font-semibold">
+              <Clock10Icon className="w-5 h-5" />
+              <span>Total Time Allowed</span>
+            </div>
+            <div className="font-semibold">{exam.timeAllowed} minutes</div>
+          </div>
+
+          {/* Exam Level */}
+          <div className="flex justify-between items-center">
+            <div className="flex items-center space-x-2 text-muted-foreground font-semibold">
+              <LayersIcon className="w-5 h-5" />
+              <span>Exam Level</span>
             </div>
             <div className="font-semibold">{exam.examLevel}</div>
           </div>
-          <div className="flex justify-between">
-            <div className="text-muted-foreground font-semibold">
-              Available Attempts
+
+          {/* Available Attempts */}
+          <div className="flex justify-between items-center">
+            <div className="flex items-center space-x-2 text-muted-foreground font-semibold">
+              <Repeat1Icon className="w-5 h-5" />
+              <span>Available Attempts</span>
             </div>
             <div className="font-semibold">{exam.attempts}</div>
           </div>
         </div>
       </CardContent>
       <CardFooter className="flex flex-col gap-4">
-        <Button className=" w-full" asChild>
+        <Button className="w-full" asChild>
           <Link href={`/exam/${exam.id}/${exam.slug}`}>
             View Details <ArrowTopRightIcon className="ml-2 h-4 w-4" />
           </Link>

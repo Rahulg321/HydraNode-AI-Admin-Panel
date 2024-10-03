@@ -8,6 +8,7 @@ import {
 import db from "@/lib/db";
 import slugify from "slugify";
 import { revalidatePath } from "next/cache";
+import { stripe } from "@/lib/stripe";
 
 const createExam = async (
   values: CreateExamFormZodType,
@@ -23,6 +24,7 @@ const createExam = async (
         error: "send valid data",
       };
     }
+
     const {
       topic,
       ExamLevel,
@@ -37,6 +39,26 @@ const createExam = async (
       lower: true,
     });
 
+    const stripeProduct = await stripe.products.create({
+      name: topic,
+      description: description || "An exam created on the platform",
+      metadata: {
+        vendorId,
+        examLevel: ExamLevel,
+      },
+    });
+
+    // Optionally create a price for the Stripe product if you charge for the exam
+    const stripePrice = await stripe.prices.create({
+      unit_amount: price * 100, // Stripe works with the smallest currency unit (e.g., cents)
+      currency: "usd",
+      product: stripeProduct.id,
+    });
+
+    console.log("created stripe product for this exam");
+    console.log("stripe product", stripeProduct);
+    console.log("stripe price", stripePrice);
+
     await db.exam.create({
       data: {
         name: topic,
@@ -48,13 +70,15 @@ const createExam = async (
         price,
         questionsToShow,
         description,
+        stripeProductId: stripeProduct.id,
+        stripePriceId: stripePrice.id,
       },
     });
 
     revalidatePath(`vendor/${vendorSlug}`);
 
     return {
-      success: "successfully created exam",
+      success: "successfully created exam and corresponding product in stripe",
     };
   } catch (error) {
     console.log(error);
