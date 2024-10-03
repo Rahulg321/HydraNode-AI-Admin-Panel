@@ -45,6 +45,8 @@ const CreateExamForm = ({
       ExamLevel: "ASSOCIATE",
       timeAllowed: 30,
       numberOfAttempts: 1,
+      price: 1,
+      questionsToShow: 1,
     },
   });
 
@@ -76,7 +78,7 @@ const CreateExamForm = ({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className=" grid grid-cols-2 gap-4"
+        className="grid  grid-cols-1 md:grid-cols-2 gap-4"
       >
         <FormField
           control={form.control}
@@ -134,6 +136,41 @@ const CreateExamForm = ({
             </FormItem>
           )}
         />
+        <FormField
+          control={form.control}
+          name="numberOfAttempts"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Price for Exam</FormLabel>
+              <FormControl>
+                <Input placeholder="1" {...field} type="number" />
+              </FormControl>
+              <FormDescription>
+                Price for the Exam will be stored in USD$.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="questionsToShow"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Questions to Show</FormLabel>
+              <FormControl>
+                <Input placeholder="1" {...field} type="number" />
+              </FormControl>
+              <FormDescription>
+                These are the number of questions that will be shown to the user
+                in the frontend when is taking the exam.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <FormField
           control={form.control}
           name="numberOfAttempts"

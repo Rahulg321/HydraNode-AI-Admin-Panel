@@ -7,10 +7,22 @@ export const CreateExamFormSchema = z.object({
   ExamLevel: z.enum(["ASSOCIATE", "PROFESSIONAL", "EXPERT"]),
   timeAllowed: z.coerce
     .number()
-    .min(30, {
-      message: "Time allowed must be at least 30 minute.",
+    .min(1, {
+      message: "Time allowed must be at least 1 minute.",
     })
     .int("Time allowed must be an integer."),
+  questionsToShow: z.coerce
+    .number()
+    .min(1, {
+      message: "Questions to Show must be at least 1.",
+    })
+    .int("Price must be an integer."),
+  price: z.coerce
+    .number()
+    .min(1, {
+      message: "Price must be at least 1.",
+    })
+    .int("Price must be an integer."),
   numberOfAttempts: z.coerce
     .number()
     .min(1, {

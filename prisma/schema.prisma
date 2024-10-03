@@ -42,12 +42,14 @@ model User {
   stripeSubscriptionId   String?   @unique @map(name: "stripe_subscription_id")
   stripePriceId          String?   @map(name: "stripe_price_id")
   stripeCurrentPeriodEnd DateTime? @map(name: "stripe_current_period_end")
+
+  hasLifetimeAccess Boolean @default(false)
 }
 
 model Payment {
   id                    String        @id @default(cuid())
   userId                String
-  user                  User          @relation(fields: [userId], references: [id])
+  user                  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   amount                Float
   currency              String
   paymentType           PaymentType
@@ -73,7 +75,7 @@ enum PaymentStatus {
 model Profile {
   id     Int    @id @default(autoincrement())
   bio    String
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String @unique
 }
 
@@ -151,33 +153,53 @@ enum ExamLevel {
 
 // each individual exam, it can belong to a vendor
 model Exam {
-  id          String        @id @default(cuid())
-  name        String
-  slug        String        @unique
-  vendorId    String
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  timeAllowed Int
-  attempts    Int
-  vendor      Vendor        @relation(fields: [vendorId], references: [id], onDelete: Cascade)
-  examLevel   ExamLevel
-  questions   Question[]
-  QuizSession QuizSession[]
+  id              String        @id @default(cuid())
+  name            String
+  slug            String        @unique
+  vendorId        String
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  timeAllowed     Int
+  price           Int           @default(0)
+  stripeProductId String?
+  attempts        Int
+  vendor          Vendor        @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  examLevel       ExamLevel
+  questions       Question[]
+  QuizSession     QuizSession[]
+
+  // questions to show to the user
+  questionsToShow Int     @default(10) // Default value, can be adjusted
+  description     String? // Description of the exam
+}
+
+enum ExamModeValues {
+  PRACTICE
+  MOCK
 }
 
 model QuizSession {
-  id          String    @id @default(cuid())
+  id          String         @id @default(cuid())
   userId      String
   examId      String
+  examMode    ExamModeValues @default(PRACTICE)
   startTime   DateTime
   endTime     DateTime?
-  isCompleted Boolean   @default(false)
+  isCompleted Boolean        @default(false)
 
   user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   exam         Exam          @relation(fields: [examId], references: [id], onDelete: Cascade)
   userAttempts UserAttempt[]
 
+  // New fields to track quiz result details
+  correctAnswers   Int      @default(0) // Tracks the number of correct answers
+  incorrectAnswers Int      @default(0) // Tracks the number of incorrect answers
+  skippedAnswers   Int      @default(0) // Tracks the number of skipped answers
+  passFailStatus   Boolean? // True for pass, False for fail, nullable until quiz is evaluated
+  percentageScored Float? // Stores the percentage score, nullable until quiz is completed
+
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model UserAttempt {

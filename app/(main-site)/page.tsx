@@ -43,9 +43,10 @@ export default async function Home() {
         </h1>
         <h2>All Exam Types are {vendors.length}</h2>
       </div>
-      <div className="">
+      <div className="mb-4">
         <CreateExamTypeDialog />
       </div>
+
       <ul className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {vendors.map((vendor) => (
           <li key={vendor.id}>
@@ -60,8 +61,8 @@ export default async function Home() {
 function ExamTypeCard({ vendor }: { vendor: Vendor }) {
   const formattedDate = format(new Date(vendor.updatedAt), "dd MMMM yyyy");
   return (
-    <Card>
-      <CardHeader className="relative bg-muted rounded-b-md">
+    <Card className="bg-muted">
+      <CardHeader className="relative rounded-b-md">
         <CardTitle>{vendor.name}</CardTitle>
         <CardDescription className="font-semibold">
           Updated At: {formattedDate}
@@ -71,14 +72,7 @@ function ExamTypeCard({ vendor }: { vendor: Vendor }) {
       <CardContent className="p-4">
         <h5 className="font-bold">Exam Details</h5>
         <Separator className="mb-4 mt-2" />
-        <div className="space-y-3">
-          <div className="flex justify-between">
-            <div className="text-muted-foreground font-semibold">
-              Available Levels
-            </div>
-            <div className="font-semibold">3</div>
-          </div>
-        </div>
+        <div className="space-y-3"></div>
       </CardContent>
       <CardFooter className="flex flex-col gap-4">
         <Button className=" w-full" asChild>

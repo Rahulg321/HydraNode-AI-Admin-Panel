@@ -17,13 +17,20 @@ const createExam = async (
   try {
     // validate fields on the server
     const validatedFields = CreateExamFormSchema.safeParse(values);
+
     if (!validatedFields.success) {
       return {
         error: "send valid data",
       };
     }
-    const { topic, ExamLevel, timeAllowed, numberOfAttempts } =
-      validatedFields.data;
+    const {
+      topic,
+      ExamLevel,
+      timeAllowed,
+      numberOfAttempts,
+      price,
+      questionsToShow,
+    } = validatedFields.data;
 
     const slugValue = slugify(topic, {
       lower: true,
@@ -37,6 +44,8 @@ const createExam = async (
         attempts: numberOfAttempts,
         vendorId,
         timeAllowed,
+        price,
+        questionsToShow,
       },
     });
 
