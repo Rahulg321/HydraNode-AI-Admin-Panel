@@ -53,6 +53,7 @@ const createExam = async (
       unit_amount: price * 100, // Stripe works with the smallest currency unit (e.g., cents)
       currency: "usd",
       product: stripeProduct.id,
+      billing_scheme: "per_unit",
     });
 
     console.log("created stripe product for this exam");

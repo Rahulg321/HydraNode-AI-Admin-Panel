@@ -46,21 +46,32 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { HardHatIcon, PlusCircleIcon } from "lucide-react";
+import { Textarea } from "../ui/textarea";
 
 const EditExamFormCard = ({
   examId,
   examSlug,
+  stripePriceId,
+  stripeProductId,
   topic,
   ExamLevel,
   timeAllowed,
+  description,
   numberOfAttempts,
+  price,
+  questionsToShow,
 }: {
   examId: string;
   examSlug: string;
+  stripePriceId: string;
+  stripeProductId: string;
   topic: string;
+  description: string;
   ExamLevel: "ASSOCIATE" | "PROFESSIONAL" | "EXPERT" | undefined;
   timeAllowed: number;
   numberOfAttempts: number;
+  price: number;
+  questionsToShow: number;
 }) => {
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
@@ -72,7 +83,10 @@ const EditExamFormCard = ({
       topic,
       ExamLevel,
       timeAllowed,
+      price,
+      questionsToShow,
       numberOfAttempts,
+      description,
     },
   });
 
@@ -81,7 +95,13 @@ const EditExamFormCard = ({
     // ✅ This will be type-safe and validated.
     startTransition(async () => {
       // wait for 3 sec
-      const response = await EditExam(examId, examSlug, values);
+      const response = await EditExam(
+        examId,
+        examSlug,
+        values,
+        stripePriceId,
+        stripeProductId
+      );
       if (response.success) {
         toast({
           variant: "success",
@@ -109,7 +129,7 @@ const EditExamFormCard = ({
           Edit Exam Details <HardHatIcon className="h-4 w-4 ml-2" />
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="max-w-3xl">
         <DialogHeader>
           <DialogTitle>Edit Exam Details</DialogTitle>
           <DialogDescription>
@@ -119,7 +139,10 @@ const EditExamFormCard = ({
         </DialogHeader>
         <div className="max-w-4xl">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="grid grid-cols-2 gap-4"
+            >
               <FormField
                 control={form.control}
                 name="topic"
@@ -188,6 +211,41 @@ const EditExamFormCard = ({
               />
               <FormField
                 control={form.control}
+                name="price"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Price for Exam</FormLabel>
+                    <FormControl>
+                      <Input placeholder="1" {...field} type="number" />
+                    </FormControl>
+                    <FormDescription>
+                      Price for the Exam will be stored in USD$.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="questionsToShow"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Questions to Show</FormLabel>
+                    <FormControl>
+                      <Input placeholder="1" {...field} type="number" />
+                    </FormControl>
+                    <FormDescription>
+                      These are the number of questions that will be shown to
+                      the user in the frontend when is taking the exam.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
                 name="numberOfAttempts"
                 render={({ field }) => (
                   <FormItem>
@@ -202,6 +260,24 @@ const EditExamFormCard = ({
                   </FormItem>
                 )}
               />
+              <div className="col-span-2">
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Exam Description</FormLabel>
+                      <FormControl>
+                        <Textarea placeholder="1" {...field} className="" />
+                      </FormControl>
+                      <FormDescription>
+                        Enter description for the exam.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
               <Button
                 type="submit"
                 className="w-full col-span-2"

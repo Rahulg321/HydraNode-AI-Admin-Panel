@@ -51,8 +51,20 @@ export default async function Page({
 
   console.log("questions are", questions);
 
-  const { id, slug, timeAllowed, attempts, examLevel, name, vendor } =
-    currentExam;
+  const {
+    id,
+    slug,
+    timeAllowed,
+    attempts,
+    examLevel,
+    name,
+    vendor,
+    price,
+    questionsToShow,
+    description,
+    stripePriceId,
+    stripeProductId,
+  } = currentExam;
 
   return (
     <section className="mx-auto block-space">
@@ -102,6 +114,18 @@ export default async function Page({
             </div>
             <div className="flex justify-between">
               <div className="text-muted-foreground font-semibold">
+                Exam Price
+              </div>
+              <div className="font-semibold">{price}</div>
+            </div>
+            <div className="flex justify-between">
+              <div className="text-muted-foreground font-semibold">
+                Questions To Show
+              </div>
+              <div className="font-semibold">{questionsToShow}</div>
+            </div>
+            <div className="flex justify-between">
+              <div className="text-muted-foreground font-semibold">
                 Vendor Name
               </div>
               <div className="font-semibold">{vendor.name}</div>
@@ -115,6 +139,11 @@ export default async function Page({
               topic={name}
               numberOfAttempts={attempts}
               timeAllowed={timeAllowed}
+              price={price}
+              stripePriceId={stripePriceId!}
+              stripeProductId={stripeProductId!}
+              questionsToShow={questionsToShow}
+              description={description ? description : ""}
             />
           </CardFooter>
         </Card>
