@@ -30,6 +30,7 @@ const createExam = async (
       numberOfAttempts,
       price,
       questionsToShow,
+      description,
     } = validatedFields.data;
 
     const slugValue = slugify(topic, {
@@ -46,6 +47,7 @@ const createExam = async (
         timeAllowed,
         price,
         questionsToShow,
+        description,
       },
     });
 

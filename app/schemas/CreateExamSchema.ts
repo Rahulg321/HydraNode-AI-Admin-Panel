@@ -4,6 +4,12 @@ export const CreateExamFormSchema = z.object({
   topic: z.string().min(4, {
     message: "Topic Name must be at least 4 characters.",
   }),
+  description: z
+    .string()
+    .min(10, {
+      message: "Exam Description must be at least 10 characters.",
+    })
+    .optional(),
   ExamLevel: z.enum(["ASSOCIATE", "PROFESSIONAL", "EXPERT"]),
   timeAllowed: z.coerce
     .number()

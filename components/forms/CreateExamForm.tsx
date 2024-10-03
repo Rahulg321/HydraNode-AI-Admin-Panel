@@ -27,6 +27,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import createExam from "@/app/actions/CreateExam";
+import { Textarea } from "../ui/textarea";
 
 const CreateExamForm = ({
   vendorId,
@@ -42,6 +43,9 @@ const CreateExamForm = ({
     resolver: zodResolver(CreateExamFormSchema),
     defaultValues: {
       topic: "",
+      description:
+        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis eaque vitae voluptas, repudiandae nulla deserunt aut? Rem nam vero recusandae dolorem consectetur cum amet facilis corporis tenetur architecto, itaque maxime!",
+
       ExamLevel: "ASSOCIATE",
       timeAllowed: 30,
       numberOfAttempts: 1,
@@ -187,6 +191,25 @@ const CreateExamForm = ({
             </FormItem>
           )}
         />
+
+        <div className="col-span-2">
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Exam Description</FormLabel>
+                <FormControl>
+                  <Textarea placeholder="1" {...field} className="" />
+                </FormControl>
+                <FormDescription>
+                  Enter description for the exam.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
         <Button
           type="submit"
           className="w-full col-span-2"

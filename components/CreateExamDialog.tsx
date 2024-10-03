@@ -20,7 +20,7 @@ const CreateExamDialog = ({ vendor }: { vendor: Vendor }) => {
           Create Exam <PlusCircleIcon className="h-4 w-4 ml-2" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-4xl">
         <DialogHeader>
           <DialogTitle>Create an Exam for {vendor.name}</DialogTitle>
           <DialogDescription>
