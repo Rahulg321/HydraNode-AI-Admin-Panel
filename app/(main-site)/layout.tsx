@@ -33,21 +33,15 @@ export default async function RootLayout({
             GeistSans.className
           )}
         >
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <SessionProvider>
-              <TooltipProvider>
-                <main className="">
-                  <Header session={session} />
-                  {children}
-                </main>
-              </TooltipProvider>
-            </SessionProvider>
-          </ThemeProvider>
+          <SessionProvider>
+            <TooltipProvider>
+              <main className="">
+                <Header session={session} />
+                {children}
+              </main>
+            </TooltipProvider>
+          </SessionProvider>
+
           <Toaster />
         </body>
       </html>
