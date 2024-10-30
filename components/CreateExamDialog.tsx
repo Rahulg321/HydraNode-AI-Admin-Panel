@@ -15,7 +15,7 @@ import CreateExamForm from "./forms/CreateExamForm";
 import { Vendor } from "@prisma/client";
 
 const CreateExamDialog = ({ vendorId }: { vendorId: string }) => {
-  const [openDialog, setOpenDialog] = useState(true);
+  const [openDialog, setOpenDialog] = useState(false);
 
   return (
     <Dialog open={openDialog} onOpenChange={setOpenDialog}>
