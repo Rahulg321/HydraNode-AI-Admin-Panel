@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Dialog,
   DialogContent,
@@ -9,10 +11,12 @@ import {
 import { Button } from "./ui/button";
 import { PlusCircleIcon } from "lucide-react";
 import CreateVendorForm from "./forms/CreateVendorForm";
+import { useState } from "react";
 
 export default function CreateExamTypeDialog() {
+  const [openDialog, setOpenDialog] = useState(false);
   return (
-    <Dialog>
+    <Dialog open={openDialog} onOpenChange={setOpenDialog}>
       <DialogTrigger asChild>
         <Button>
           Create Vendor <PlusCircleIcon className="h-4 w-4 ml-2" />
@@ -26,7 +30,7 @@ export default function CreateExamTypeDialog() {
             Click submit when done.
           </DialogDescription>
           <div className="mt-4">
-            <CreateVendorForm />
+            <CreateVendorForm setOpenDialog={setOpenDialog} />
           </div>
         </DialogHeader>
       </DialogContent>

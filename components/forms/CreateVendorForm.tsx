@@ -22,7 +22,11 @@ import {
   VendorFormZodType,
 } from "@/app/schemas/CreateVendorSchema";
 
-export default function CreateVendorForm() {
+export default function CreateVendorForm({
+  setOpenDialog,
+}: {
+  setOpenDialog: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
 

@@ -5,6 +5,7 @@ import {
   Inbox,
   MoreHorizontal,
   Plus,
+  PlusCircle,
   Search,
   Settings,
 } from "lucide-react";
@@ -75,22 +76,13 @@ export default function QuestionsSidebar({ examId }: { examId: string }) {
     <Sidebar className="" collapsible="none" variant="inset">
       <SidebarHeader>
         <SidebarMenu>
-          <SidebarMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton>
-                  Exam
-                  <ChevronDown className="ml-auto" />
-                </SidebarMenuButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-[--radix-popper-anchor-width]">
-                <DropdownMenuItem asChild>
-                  <Link href={`/exam/${examId}/questions/new`}>
-                    <span>Add Question</span>
-                  </Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+          <SidebarMenuItem className="">
+            <SidebarMenuButton asChild>
+              <a href={`/exam/${examId}/questions/new`}>
+                <PlusCircle />
+                <span>Add Question</span>
+              </a>
+            </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
