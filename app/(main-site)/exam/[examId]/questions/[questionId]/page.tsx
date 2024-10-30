@@ -1,4 +1,5 @@
 import EditQuestionForm from "@/components/forms/edit-question-form";
+import HtmlContent from "@/components/html-content";
 import { MinimalTiptapEditor } from "@/components/minimal-tiptap";
 import QuestionDetailSkeleton from "@/components/skeletons/QuestionDetailSkeleton";
 import TipTapEditor from "@/components/tiptap-editor";
@@ -17,30 +18,6 @@ const SpecificQuestionPage = async ({
 }) => {
   const { examId, questionId } = params;
 
-  return (
-    <section className="block-space big-container">
-      <Suspense
-        fallback={
-          <div>
-            <QuestionDetailSkeleton />
-          </div>
-        }
-      >
-        <FetchQuestionDetails examId={examId} questionId={questionId} />
-      </Suspense>
-    </section>
-  );
-};
-
-export default SpecificQuestionPage;
-
-async function FetchQuestionDetails({
-  examId,
-  questionId,
-}: {
-  examId: string;
-  questionId: string;
-}) {
   const SpecificQuestion = await db.question.findUnique({
     where: {
       id: questionId,
@@ -59,13 +36,16 @@ async function FetchQuestionDetails({
   const { id, question } = SpecificQuestion;
 
   return (
-    <div className="">
-      <h2 className="mb-4 md:mb-6">
-        Edit Question:- <span className="italic">{question}</span>
-      </h2>
-      <div>
-        <EditQuestionForm SingleQuestion={SpecificQuestion} />
+    <section className="block-space narrow-container">
+      <div className="mb-8 space-y-4">
+        <h2>Edit Question</h2>
+        <HtmlContent content={question} />
       </div>
-    </div>
+      <div>
+        <EditQuestionForm SingleQuestion={SpecificQuestion} examId={examId} />
+      </div>
+    </section>
   );
-}
+};
+
+export default SpecificQuestionPage;

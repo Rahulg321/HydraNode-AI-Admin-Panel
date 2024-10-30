@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -30,12 +30,14 @@ import { Textarea } from "../ui/textarea";
 import { Image } from "../minimal-tiptap/extensions";
 import { Editor } from "@tiptap/core";
 import { cn } from "@/lib/utils";
+import editSingleQuestion from "@/app/actions/EditSingleQuestion";
+import { useToast } from "../ui/use-toast";
 
 // Enum to match the QuestionType in Prisma
 const QuestionTypeEnum = z.enum(["multiple_choice", "multi_select"]);
 
 export const EditQuestionFormSchema = z.object({
-  id: z.string().cuid().optional(), // Optional if not needed for the edit form
+  id: z.string().cuid(), // Optional if not needed for the edit form
   question: z.any(),
   questionType: QuestionTypeEnum,
   answerOption1: z.string().min(1, "Option 1 is required"),
@@ -57,7 +59,15 @@ export const EditQuestionFormSchema = z.object({
 
 export type EditQuestionFormZodType = z.infer<typeof EditQuestionFormSchema>;
 
-const EditQuestionForm = ({ SingleQuestion }: { SingleQuestion: Question }) => {
+const EditQuestionForm = ({
+  SingleQuestion,
+  examId,
+}: {
+  SingleQuestion: Question;
+  examId: string;
+}) => {
+  const [isPending, startTransition] = useTransition();
+  const { toast } = useToast();
   const form = useForm<EditQuestionFormZodType>({
     resolver: zodResolver(EditQuestionFormSchema),
     defaultValues: {
@@ -83,9 +93,22 @@ const EditQuestionForm = ({ SingleQuestion }: { SingleQuestion: Question }) => {
   });
 
   function onSubmit(values: EditQuestionFormZodType) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values.question);
+    startTransition(async () => {
+      const response = await editSingleQuestion(values, examId, values.id);
+      if (response.type === "success") {
+        toast({
+          title: "Question Edited",
+          variant: "success",
+          description: "Question was edited successfully",
+        });
+      } else {
+        toast({
+          title: "Error Editing Question",
+          variant: "destructive",
+          description: "There was an error editing the question",
+        });
+      }
+    });
   }
 
   Image.configure({
@@ -407,7 +430,9 @@ const EditQuestionForm = ({ SingleQuestion }: { SingleQuestion: Question }) => {
             )}
           />
 
-          <Button type="submit">Submit</Button>
+          <Button type="submit" disabled={isPending}>
+            {isPending ? "Editing Question..." : "Edit Question"}
+          </Button>
         </form>
       </Form>
     </div>

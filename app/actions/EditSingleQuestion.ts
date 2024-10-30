@@ -1,55 +1,45 @@
-// "use server";
+"use server";
 
-// import db from "@/lib/db";
-// import { Question } from "@/lib/types";
-// import { revalidatePath } from "next/cache";
+import db from "@/lib/db";
+import { Question } from "@/lib/types";
+import { revalidatePath } from "next/cache";
+import { EditQuestionZodType } from "../schemas/EditQuestionSchema";
+import { EditQuestionFormZodType } from "@/components/forms/edit-question-form";
 
-export default async function editSingleQuestion() {}
+export default async function editSingleQuestion(
+  questionInstance: EditQuestionFormZodType,
+  examId: string,
+  questionId: string
+) {
+  try {
+    if (!questionId || !questionInstance) {
+      return {
+        type: "error",
+        message:
+          "please provide a valid question id and question object, server side error",
+      };
+    }
 
-// const editSingleQuestion = async (values: Question, examId: string) => {
-//   let option1 = values.option1;
-//   let option2 = values.option2;
-//   let option3 = values.option3;
-//   let option4 = values.option4;
-//   let options = [
-//     {
-//       option1,
-//     },
-//     {
-//       option2,
-//     },
-//     {
-//       option3,
-//     },
-//     {
-//       option4,
-//     },
-//   ];
-//   console.log("values", values);
-//   console.log("options", options);
+    const response = await db.question.update({
+      where: {
+        id: questionId,
+      },
+      data: {
+        ...questionInstance,
+      },
+    });
 
-//   try {
-//     await db.question.update({
-//       where: {
-//         id: values.id,
-//       },
-//       data: {
-//         question: values.question,
-//         answer: values.answer,
-//         options: JSON.stringify(options),
-//       },
-//     });
+    revalidatePath(`/exam/${examId}/questions/${questionId}`);
 
-//     revalidatePath(`/exam/${examId}/`);
-
-//     return {
-//       success: "successfully edited question",
-//     };
-//   } catch (error) {
-//     console.log("error while editing question in server action", error);
-//     return {
-//       error: "Could not edit question",
-//     };
-//   }
-// };
-// export default editSingleQuestion;
+    return {
+      type: "success",
+      message: "Question edited successfully",
+    };
+  } catch (error) {
+    console.log("error editing question", error);
+    return {
+      type: "error",
+      message: "Error editing question",
+    };
+  }
+}
