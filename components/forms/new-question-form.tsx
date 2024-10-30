@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -30,11 +30,15 @@ import { Textarea } from "../ui/textarea";
 import { Image } from "../minimal-tiptap/extensions";
 import { Editor } from "@tiptap/core";
 import { cn } from "@/lib/utils";
+import { useToast } from "../ui/use-toast";
+import addNewQuestion from "@/app/actions/AddNewQuestion";
+import { useRouter } from "next/navigation";
+import { ToastAction } from "../ui/toast";
 
 const QuestionTypeEnum = z.enum(["multiple_choice", "multi_select"]);
 
 export const NewQuestionFormSchema = z.object({
-  question: z.any(),
+  question: z.string(),
   questionType: QuestionTypeEnum,
   answerOption1: z.string().min(1, "Option 1 is required"),
   explanation1: z.string().optional(),
@@ -55,7 +59,11 @@ export const NewQuestionFormSchema = z.object({
 
 export type NewQuestionFormZodType = z.infer<typeof NewQuestionFormSchema>;
 
-const AddNewQuestionForm = () => {
+const AddNewQuestionForm = ({ examId }: { examId: string }) => {
+  const [isPending, startTransition] = useTransition();
+  const { toast } = useToast();
+  const router = useRouter();
+
   const form = useForm<NewQuestionFormZodType>({
     resolver: zodResolver(NewQuestionFormSchema),
     defaultValues: {
@@ -80,9 +88,33 @@ const AddNewQuestionForm = () => {
   });
 
   function onSubmit(values: NewQuestionFormZodType) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values.question);
+    startTransition(async () => {
+      const response = await addNewQuestion(values, examId);
+      if (response.type === "success") {
+        toast({
+          title: "Question Added 🎉",
+          variant: "success",
+          description: "Question was edited successfully",
+          action: (
+            <ToastAction
+              altText="View Question"
+              onClick={() => {
+                router.push(`/exam/${examId}/questions/${response.questionId}`);
+              }}
+            >
+              View
+            </ToastAction>
+          ),
+        });
+      } else {
+        toast({
+          title: "Error Adding Question",
+          variant: "destructive",
+          description: "Server Side Error Occured",
+          action: <ToastAction altText="Try again">Try again</ToastAction>,
+        });
+      }
+    });
   }
 
   Image.configure({
@@ -404,7 +436,9 @@ const AddNewQuestionForm = () => {
             )}
           />
 
-          <Button type="submit">Submit</Button>
+          <Button type="submit" disabled={isPending}>
+            {isPending ? "Adding" : "Add"}
+          </Button>
         </form>
       </Form>
     </div>

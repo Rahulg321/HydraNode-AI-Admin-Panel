@@ -152,6 +152,7 @@ async function NavQuestions({ examId }: { examId: string }) {
 
   return (
     <SidebarMenu>
+      <span>Total ({questions.length})</span>
       {questions.map((e, index) => (
         <SidebarMenuItem key={index}>
           <SidebarComponentButton
