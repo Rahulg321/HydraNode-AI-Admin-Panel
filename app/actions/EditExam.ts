@@ -96,7 +96,7 @@ const EditExam = async (
     });
 
     // Revalidate the path once after all updates are done
-    revalidatePath(`/exam/${examId}/${examSlug}`);
+    revalidatePath(`/exam/${examId}`);
 
     return {
       success:

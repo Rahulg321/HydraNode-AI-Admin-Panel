@@ -10,11 +10,7 @@ import slugify from "slugify";
 import { revalidatePath } from "next/cache";
 import { stripe } from "@/lib/stripe";
 
-const createExam = async (
-  values: CreateExamFormZodType,
-  vendorId: string,
-  vendorSlug: string
-) => {
+const createExam = async (values: CreateExamFormZodType, vendorId: string) => {
   try {
     // validate fields on the server
     const validatedFields = CreateExamFormSchema.safeParse(values);
@@ -44,7 +40,7 @@ const createExam = async (
       description: description || "An exam created on the platform",
       metadata: {
         vendorId,
-        examLevel: ExamLevel,
+        examId: ExamLevel,
       },
     });
 
@@ -76,7 +72,7 @@ const createExam = async (
       },
     });
 
-    revalidatePath(`vendor/${vendorSlug}`);
+    revalidatePath(`vendors/${vendorId}`);
 
     return {
       success: "successfully created exam and corresponding product in stripe",

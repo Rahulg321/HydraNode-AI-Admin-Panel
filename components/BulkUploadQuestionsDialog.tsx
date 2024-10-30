@@ -30,12 +30,16 @@ const BulkUploadQuestionsDialog = ({ examId }: { examId: string }) => {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Bulk Upload Questions</DialogTitle>
-          <DialogDescription>
-            Bulk Upload Questions to the for this particular Exam .
+          <DialogDescription className="text-red-500 font-bold">
+            Bulk Upload Questions. Please adhere to a specific schema before
+            uploading file.
           </DialogDescription>
         </DialogHeader>
 
-        <BulkUploadQuestionsButton examId={examId} />
+        <BulkUploadQuestionsButton
+          examId={examId}
+          setDialogState={setOpenDialog}
+        />
       </DialogContent>
     </Dialog>
   );

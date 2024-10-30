@@ -35,10 +35,10 @@ export const createVendor = async (values: VendorFormZodType) => {
       },
     });
 
-    revalidatePath("/");
+    revalidatePath("/vendors");
 
     return {
-      success: "successfully deleted Exam Vendor",
+      success: "successfully created Exam Vendor",
     };
   } catch (error) {
     console.log(error);

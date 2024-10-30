@@ -1,11 +1,5 @@
 "use client";
 
-import clsx from "clsx";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import React, { useEffect, useState } from "react";
-import { MdMenu, MdClose } from "react-icons/md";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,22 +9,30 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+import clsx from "clsx";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import React, { useState } from "react";
+import { MdMenu, MdClose } from "react-icons/md";
+
+import Image from "next/image";
+import { signOut, useSession } from "next-auth/react";
+
 import { Session } from "next-auth";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ChevronDown } from "lucide-react";
-import { signOut } from "next-auth/react";
 
 type HeaderProps = {
   session: Session | null;
   classname?: string;
 };
 
-// export const NavLinks = [
-//   { navlink: "/", navlabel: "Home" },
-//   { navlink: "/raw-deals", navlabel: "Raw Deals" },
-//   { navlink: "/published-deals", navlabel: "Published Deals" },
-// ];
+const desktopNav = [
+  { navlink: "/vendors", navlabel: "Vendors" },
+  { navlink: "/dashboard", navlabel: "Dashboard" },
+];
 
-const Header = ({ classname, session }: HeaderProps) => {
+const Header = ({ session, classname }: HeaderProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
@@ -38,17 +40,25 @@ const Header = ({ classname, session }: HeaderProps) => {
     <>
       <header
         className={clsx(
-          " px-2 md:px-4 lg:px-12 py-2 border-b sticky top-0 z-50 bg-background",
-          classname
+          "w-full px-2 py-2 md:px-4 lg:px-12 border-b-2",
+          classname,
+          pathname === "/token" || pathname === "/reward"
+            ? "bg-[#110C1F]"
+            : "bg-white"
         )}
       >
         <nav aria-label="Main-navigation">
-          <ul className="flex flex-col  md:m-4 md:flex-row md:items-center justify-between md:rounded-xl">
+          <ul className="flex flex-col md:m-4 w-full md:flex-row md:items-center md:justify-between md:rounded-xl">
             <div className="flex items-center justify-between">
               <NameLogo />
               <button
                 aria-label="Open menu"
-                className="block text-2xl text-black dark:text-white md:hidden"
+                className={clsx(
+                  "block text-2xl text-black dark:text-white md:hidden",
+                  pathname === "/token" || pathname === "/reward"
+                    ? "text-white"
+                    : null
+                )}
                 onClick={() => setIsOpen(true)}
               >
                 <MdMenu />
@@ -56,18 +66,23 @@ const Header = ({ classname, session }: HeaderProps) => {
             </div>
             <div
               className={clsx(
-                "fixed bottom-0 left-0 right-0 top-0 z-50 flex flex-col items-end gap-4 bg-black text-white pr-4 pt-14  transition-transform duration-300 ease-in-out md:hidden",
+                "fixed bottom-0 left-0 right-0 top-0 z-50 flex flex-col items-end gap-4 bg-black pr-4 pt-14 text-white transition-transform duration-300 ease-in-out md:hidden",
                 isOpen ? "translate-x-0" : "translate-x-[100%]"
               )}
             >
               <button
                 aria-label="Close menu"
-                className="fixed right-4 top-3 block p-2 text-2xl text-white md:hidden "
+                className={clsx(
+                  "fixed right-4 top-3 block p-2 text-2xl text-white md:hidden",
+                  pathname === "/token" || pathname === "/reward"
+                    ? "text-white"
+                    : null
+                )}
                 onClick={() => setIsOpen(false)}
               >
                 <MdClose />
               </button>
-              {/* {NavLinks.map((item, index) => {
+              {desktopNav.map((item, index) => {
                 return (
                   <Link
                     href={item.navlink}
@@ -83,17 +98,11 @@ const Header = ({ classname, session }: HeaderProps) => {
                     {item.navlabel}
                   </Link>
                 );
-              })} */}
+              })}
             </div>
             <DesktopMenu />
-            {session ? (
-              <div className="flex items-center gap-4">
-                {/* <Search placeholder="search deals..." /> */}
-                <ProfileMenu session={session} />
-              </div>
-            ) : (
-              <AuthDialogNavs />
-            )}
+            {/* if session does not exist user is not logged in and dont show the login and sign up links */}
+            {session ? <ProfileMenu session={session} /> : <AuthDialogNavs />}
           </ul>
         </nav>
       </header>
@@ -103,17 +112,11 @@ const Header = ({ classname, session }: HeaderProps) => {
 
 export default Header;
 
-function NameLogo() {
+function NameLogo({}: {}) {
   return (
-    <div className="">
-      <Link
-        href="/"
-        aria-label="Home page"
-        className="text-3xl md:text-4xl font-bold text-mainC"
-      >
-        HydraNode Admin Panel
-      </Link>
-    </div>
+    <Link href={"/"}>
+      <h2>HydraNode Admin Panel</h2>
+    </Link>
   );
 }
 
@@ -121,65 +124,44 @@ function DesktopMenu() {
   const pathname = usePathname();
   return (
     <div className="hidden gap-8 md:flex md:items-center">
-      {/* {NavLinks.map((item, index) => {
+      {desktopNav.map((item, index) => {
         return (
           <Link
             href={item.navlink}
             key={index}
             className={clsx(
-              "font-bold hover:underline-offset-8 hover:text-mainC hover:underline  hover:decoration-4 hover:decoration-mainC transition",
+              "hover:text-mainC hover:decoration-mainC font-bold transition hover:underline hover:decoration-4 hover:underline-offset-8",
+              pathname === "/token" || pathname === "/reward"
+                ? "text-white"
+                : "",
               pathname === item.navlink
-                ? "text-mainC underline-offset-8 underline decoration-4"
+                ? "text-mainC underline decoration-4 underline-offset-8"
                 : ""
             )}
           >
             {item.navlabel}
           </Link>
         );
-      })} */}
-      {/* <InstantSearch
-        searchClient={searchClient}
-        indexName="deals_index"
-        insights
-      >
-        <Configure hitsPerPage={5} />
-        <SearchBox />
-        <Hits hitComponent={Hit} />
-        <Pagination />
-      </InstantSearch> */}
+      })}
     </div>
   );
 }
-
-// function Hit({ hit }: any) {
-//   console.log("hit", hit);
-//   return (
-//     <article className="bg-red-300">
-//       <h1>
-//         <Highlight attribute="data.title" hit={hit} />
-//       </h1>
-//       <p>${hit.data.asking_price}</p>
-//     </article>
-//   );
-// }
 
 function AuthDialogNavs() {
   return (
     <div className="hidden space-x-4 md:flex md:items-center">
-      <Link href={"/auth/login"}>Login</Link>
+      <Link href={"/login"}>Login</Link>
     </div>
   );
 }
 
-function ProfileMenu({ session }: { session: Session | null }) {
-  console.log("session in profile menu", session);
-
+function ProfileMenu({ session }: { session: Session }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="flex items-center gap-2">
         <Avatar>
           <AvatarImage
-            src={session?.user?.image || "https://github.com/shadcn.png"}
+            src={session.user?.image || "https://github.com/shadcn.png"}
             alt="@shadcn"
           />
           <AvatarFallback>CN</AvatarFallback>
@@ -189,12 +171,6 @@ function ProfileMenu({ session }: { session: Session | null }) {
         </span>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        {/* <DropdownMenuItem asChild>
-          <Link href={`/profile/${session?.user?.id}`}>Profile</Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem>Billing</DropdownMenuItem>
-        <DropdownMenuItem>Subscription</DropdownMenuItem> */}
-        {/* <DropdownMenuSeparator /> */}
         <DropdownMenuItem onClick={() => signOut()}>Logout</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -31,10 +31,10 @@ import { Textarea } from "../ui/textarea";
 
 const CreateExamForm = ({
   vendorId,
-  vendorSlug,
+  setOpenDialog,
 }: {
   vendorId: string;
-  vendorSlug: string;
+  setOpenDialog: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
@@ -59,13 +59,14 @@ const CreateExamForm = ({
     // ✅ This will be type-safe and validated.
     startTransition(async () => {
       console.log("values are ", values);
-      const reponse = await createExam(values, vendorId, vendorSlug);
+      const reponse = await createExam(values, vendorId);
       if (reponse.success) {
         toast({
           variant: "success",
           title: "Successfully Created New Exam 🎉",
           description: reponse.success,
         });
+        setOpenDialog(false);
       }
 
       if (reponse.error) {

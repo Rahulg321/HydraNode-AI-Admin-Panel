@@ -1,139 +1,55 @@
 "use server";
 
 import db from "@/lib/db";
-import { BaseQuestion, MCQQuestion, MultiSelectQuestion } from "@/lib/types";
-import { QuestionType } from "@prisma/client";
-import { revalidatePath } from "next/cache";
 
-export const bulkUploadQuestionsFromCSV = async (
-  examId: string,
-  parsedCSVQuestions: BaseQuestion[]
-) => {
-  console.log("parsedCSVQuestions are", parsedCSVQuestions);
-
+const BulkUploadQuestions = async (examId: string, sheetData: any) => {
   try {
-    // Process each question from the CSV
-    for (const question of parsedCSVQuestions) {
-      // Initialize variables for common fields
-      let questionString = question.question_text;
-      let correctAnswers: string[] = [];
-      let options: any[] = [];
+    const mapCSVToSchema = (row: any) => ({
+      question: row["Question"] || "", // Transform the column name
+      questionType:
+        row["Question Type"] === "multi-select"
+          ? "multi_select"
+          : "multiple_choice", // Convert type to match enum
+      answerOption1: row["Answer Option 1"] || "",
+      explanation1: row["Explanation 1"] || "",
+      answerOption2: row["Answer Option 2"] || "",
+      explanation2: row["Explanation 2"] || "",
+      answerOption3: row["Answer Option 3"] || "",
+      explanation3: row["Explanation 3"] || "",
+      answerOption4: row["Answer Option 4"] || "",
+      explanation4: row["Explanation 4"] || "",
+      answerOption5: row["Answer Option 5"] || null, // Nullable field
+      explanation5: row["Explanation 5"] || null,
+      answerOption6: row["Answer Option 6"] || null,
+      explanation6: row["Explanation 6"] || null,
+      correctAnswers: row["Correct Answers"] || "",
+      overallExplanation: row["Overall Explanation"] || "",
+      domain: row["Domain"] || "",
+      examId, // Attach the provided examId
+    });
 
-      // Handle MCQ Question
-      if (question.type === "MCQ") {
-        const mcq = question as MCQQuestion;
+    // Map and clean the data
+    const cleanedData = sheetData.map(mapCSVToSchema);
 
-        correctAnswers = [mcq.answer_1].filter(Boolean);
+    console.log("cleaned data is", cleanedData);
 
-        options = [
-          mcq.option_1 && {
-            option: mcq.option_1,
-            explanation: mcq.explanation_1,
-          },
-          mcq.option_2 && {
-            option: mcq.option_2,
-            explanation: mcq.explanation_2,
-          },
-          mcq.option_3 && {
-            option: mcq.option_3,
-            explanation: mcq.explanation_3,
-          },
-          mcq.option_4 && {
-            option: mcq.option_4,
-            explanation: mcq.explanation_4,
-          },
-        ].filter(Boolean); // Filter out any null or undefined options
-      }
-      // Handle Multi-Select Question
-      else if (question.type === "multi-select") {
-        const multiSelect = question as MultiSelectQuestion;
-
-        // Prepare data for multi-select, filtering out null or empty values
-        correctAnswers = [multiSelect.answer_1, multiSelect.answer_2].filter(
-          Boolean
-        );
-
-        options = [
-          multiSelect.option_1 && {
-            option: multiSelect.option_1,
-            explanation: multiSelect.explanation_1,
-          },
-          multiSelect.option_2 && {
-            option: multiSelect.option_2,
-            explanation: multiSelect.explanation_2,
-          },
-          multiSelect.option_3 && {
-            option: multiSelect.option_3,
-            explanation: multiSelect.explanation_3,
-          },
-          multiSelect.option_4 && {
-            option: multiSelect.option_4,
-            explanation: multiSelect.explanation_4,
-          },
-          multiSelect.option_5 && {
-            option: multiSelect.option_5,
-            explanation: multiSelect.explanation_5,
-          },
-          multiSelect.option_6 && {
-            option: multiSelect.option_6,
-            explanation: multiSelect.explanation_6,
-          },
-        ].filter(Boolean); // Filter out any null or undefined options
-      }
-
-      // If the question has no valid correct answers or options, skip it
-      if (correctAnswers.length === 0 || options.length === 0) {
-        continue;
-      }
-
-      console.log("options are", options);
-      console.log("correctAnswers are", correctAnswers);
-
-      // Create the question first
-      const createdQuestion = await db.question.create({
-        data: {
-          question: questionString,
-          type:
-            question.type === "MCQ"
-              ? QuestionType.MCQ
-              : QuestionType.MULTI_SELECT,
-          overallExplanation: question.overall_explanation,
-          examId,
-        },
-      });
-
-      // Insert options into the QuestionOption table
-      for (const option of options) {
-        await db.questionOption.create({
-          data: {
-            option: option.option,
-            explanation: option.explanation,
-            questionId: createdQuestion.id,
-          },
-        });
-      }
-
-      // Insert correct answers into the CorrectAnswer table
-      for (const correctAnswer of correctAnswers) {
-        await db.correctAnswer.create({
-          data: {
-            answer: correctAnswer, // Assuming answer corresponds to the option text
-            questionId: createdQuestion.id,
-          },
-        });
-      }
-    }
-
-    // Revalidate the exam page after bulk upload
-    revalidatePath(`/exam/${examId}`);
+    // Insert cleaned data in bulk
+    await db.question.createMany({
+      data: cleanedData,
+      skipDuplicates: true, // Optional: skips entries with duplicate IDs
+    });
 
     return {
-      success: "Successfully saved questions",
+      type: "success",
+      message: `${cleanedData.length} questions uploaded successfully!`,
     };
   } catch (error) {
-    console.error("An error occurred while trying to save questions", error);
+    console.log(error);
     return {
-      error: "Could not save questions",
+      type: "error",
+      message: `error: ${error}`,
     };
   }
 };
+
+export default BulkUploadQuestions;

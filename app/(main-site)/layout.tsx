@@ -7,6 +7,10 @@ import { GeistSans } from "geist/font/sans";
 import "../globals.css";
 import Header from "@/components/Header";
 import { auth } from "@/auth";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { ViewTransitions } from "next-view-transitions";
+import { SessionProvider } from "next-auth/react";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 export const metadata: Metadata = {
   title: "HydraNode Admin Panel",
@@ -21,27 +25,32 @@ export default async function RootLayout({
   const session = await auth();
 
   return (
-    <html lang="en">
-      <body
-        className={cn(
-          "min-h-screen bg-background antialiased",
-          GeistSans.className
-        )}
-      >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
+    <ViewTransitions>
+      <html lang="en">
+        <body
+          className={cn(
+            "min-h-screen bg-background antialiased",
+            GeistSans.className
+          )}
         >
-          <div className="absolute top-8 right-6">
-            <ModeToggle />
-          </div>
-          <Header session={session} />
-          <main className="container">{children}</main>
-        </ThemeProvider>
-        <Toaster />
-      </body>
-    </html>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <SessionProvider>
+              <TooltipProvider>
+                <main className="">
+                  <Header session={session} />
+                  {children}
+                </main>
+              </TooltipProvider>
+            </SessionProvider>
+          </ThemeProvider>
+          <Toaster />
+        </body>
+      </html>
+    </ViewTransitions>
   );
 }

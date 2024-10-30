@@ -11,7 +11,7 @@ export const deleteExamVendor = async (id: string) => {
       },
     });
 
-    revalidatePath("/");
+    revalidatePath("/vendors");
     return {
       success: "successfully deleted Exam Vendor",
     };

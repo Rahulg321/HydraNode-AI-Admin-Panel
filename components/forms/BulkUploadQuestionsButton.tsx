@@ -18,10 +18,8 @@ import {
 import { Input } from "@/components/ui/input";
 import Papa from "papaparse";
 import { FileIcon, Loader } from "lucide-react";
-import saveExamQuestions from "@/app/actions/SaveExamQuestions";
-import { BaseQuestion, Question } from "@/lib/types";
 import { useToast } from "../ui/use-toast";
-import { bulkUploadQuestionsFromCSV } from "@/app/actions/BulkUploadQuestions";
+import BulkUploadQuestions from "@/app/actions/BulkUploadQuestions";
 
 export const bulkUploadSchema = z.object({
   questions: z.instanceof(File).refine((file) => file.size < 7000000, {
@@ -31,7 +29,13 @@ export const bulkUploadSchema = z.object({
 
 type BulkUploadSchemaZodType = z.infer<typeof bulkUploadSchema>;
 
-const BulkUploadQuestionsButton = ({ examId }: { examId: string }) => {
+const BulkUploadQuestionsButton = ({
+  examId,
+  setDialogState,
+}: {
+  examId: string;
+  setDialogState: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
   const [isPending, startTransition] = React.useTransition();
   const { toast } = useToast();
 
@@ -55,24 +59,24 @@ const BulkUploadQuestionsButton = ({ examId }: { examId: string }) => {
             // Parse the CSV file using PapaParse
             const parsedData = Papa.parse(text, { header: true });
 
-            const response = await bulkUploadQuestionsFromCSV(
-              examId,
-              parsedData.data as BaseQuestion[]
-            );
+            console.log("parsed data is", parsedData.data);
 
-            if (response.success) {
+            const response = await BulkUploadQuestions(examId, parsedData.data);
+
+            if (response.type === "success") {
               toast({
                 variant: "success",
                 title: "Successfully Uploaded Questions 🎉",
-                description: response.success,
+                description: response.message,
               });
+              setDialogState(false);
             }
 
-            if (response.error) {
+            if (response.type === "error") {
               toast({
                 variant: "destructive",
                 title: "Uh oh! Something went wrong. ❌",
-                description: response.error,
+                description: response.message,
               });
             }
           }
@@ -111,10 +115,14 @@ const BulkUploadQuestionsButton = ({ examId }: { examId: string }) => {
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full" disabled={isPending}>
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={isPending}
+          variant={"destructive"}
+        >
           {isPending ? (
             <div className="flex items-center">
-              {" "}
               <Loader className="mr-2 h-4 w-4" />
               Uploading Questions....
             </div>

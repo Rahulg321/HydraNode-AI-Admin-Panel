@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -12,9 +14,11 @@ import { PlusCircleIcon } from "lucide-react";
 import CreateExamForm from "./forms/CreateExamForm";
 import { Vendor } from "@prisma/client";
 
-const CreateExamDialog = ({ vendor }: { vendor: Vendor }) => {
+const CreateExamDialog = ({ vendorId }: { vendorId: string }) => {
+  const [openDialog, setOpenDialog] = useState(true);
+
   return (
-    <Dialog>
+    <Dialog open={openDialog} onOpenChange={setOpenDialog}>
       <DialogTrigger asChild>
         <Button>
           Create Exam <PlusCircleIcon className="h-4 w-4 ml-2" />
@@ -22,13 +26,12 @@ const CreateExamDialog = ({ vendor }: { vendor: Vendor }) => {
       </DialogTrigger>
       <DialogContent className="max-w-4xl">
         <DialogHeader>
-          <DialogTitle>Create an Exam for {vendor.name}</DialogTitle>
+          <DialogTitle>Create a New Exam for</DialogTitle>
           <DialogDescription>
-            Create a new Exam containing AI generated questions for Vendor{" "}
-            {vendor.name}. Click submit when done.
+            Create a new Exam. Click submit when done.
           </DialogDescription>
           <div className="mt-4">
-            <CreateExamForm vendorId={vendor.id} vendorSlug={vendor.slug} />
+            <CreateExamForm vendorId={vendorId} setOpenDialog={setOpenDialog} />
           </div>
         </DialogHeader>
       </DialogContent>
