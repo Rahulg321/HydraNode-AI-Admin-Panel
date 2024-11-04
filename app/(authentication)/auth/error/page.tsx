@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import ErrorCard from "./ErrorCard";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -31,7 +31,15 @@ const AuthErrorPage = async () => {
             platform.
           </p>
 
-          <ErrorCard />
+          <Suspense
+            fallback={
+              <div>
+                <div>Loading Error Info.....</div>
+              </div>
+            }
+          >
+            <ErrorCard />
+          </Suspense>
           <Button asChild className="block w-fit">
             <Link href="/auth/login">Try Again</Link>
           </Button>
