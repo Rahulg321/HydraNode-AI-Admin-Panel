@@ -3,13 +3,20 @@
  *These are the routes that are used for authentication purposes
  *@type{string}
  */
-export const AUTH_ROUTES = ["/auth/login"];
+export const AUTH_ROUTES = ["/auth/login", "/auth/error"];
 /**
  *
  *These are the routes that are protected and user cant access without being logged in
  *@type{string}
  */
-export const PROTECTED_ROUTES = ["/", "/exam", "/vendor"];
+export const PROTECTED_ROUTES = ["/", "/exam", "/vendors", "/dashboard"];
+
+/**
+ *
+ *These are the base routes that are protected and user cant access without being logged in
+ *@type{string[]}
+ */
+export const PROTECTED_BASE_ROUTES = ["/vendors", "/exam"];
 
 /**
  *
