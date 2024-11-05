@@ -151,6 +151,7 @@ async function NavQuestions({ examId }: { examId: string }) {
             questionId={e.id}
             questionText={e.question}
             examId={examId}
+            questionIndex={index + 1}
           />
         </SidebarMenuItem>
       ))}

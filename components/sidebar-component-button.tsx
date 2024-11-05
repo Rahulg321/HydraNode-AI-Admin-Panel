@@ -15,15 +15,18 @@ import {
 } from "@/components/ui/dropdown-menu";
 import deleteSingleQuestion from "@/app/actions/DeleteSingleQuestion";
 import { useToast } from "./ui/use-toast";
+import HtmlContent from "./html-content";
 
 const SidebarComponentButton = ({
   examId,
   questionId,
   questionText,
+  questionIndex,
 }: {
   examId: string;
   questionId: string;
   questionText: string;
+  questionIndex: number;
 }) => {
   const { toast } = useToast();
   const pathname = usePathname();
@@ -36,7 +39,7 @@ const SidebarComponentButton = ({
     <div>
       <SidebarMenuButton asChild isActive={isCurrentPathname}>
         <Link href={`/exam/${examId}/questions/${questionId}`}>
-          <span>{questionText}</span>
+          Q{questionIndex}
         </Link>
       </SidebarMenuButton>
       <DropdownMenu>
