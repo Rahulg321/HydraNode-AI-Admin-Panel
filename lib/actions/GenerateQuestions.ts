@@ -4,7 +4,7 @@ import { generateObject, JSONParseError, TypeValidationError } from "ai";
 import { z } from "zod";
 import { v4 as uuidv4 } from "uuid"; // Import the UUID package
 import exp from "constants";
-import { GenerateQuestionZodType } from "../../src/app/schemas/GenerateQuestionFormSchema";
+import { GenerateQuestionZodType } from "../schemas/GenerateQuestionFormSchema";
 
 const openai = createOpenAI({
   // custom settings, e.g.
