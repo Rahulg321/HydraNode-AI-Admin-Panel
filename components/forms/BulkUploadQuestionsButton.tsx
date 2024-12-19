@@ -19,7 +19,7 @@ import { Input } from "@/components/ui/input";
 import Papa from "papaparse";
 import { FileIcon, Loader } from "lucide-react";
 import { useToast } from "../ui/use-toast";
-import BulkUploadQuestions from "@/app/actions/BulkUploadQuestions";
+import BulkUploadQuestions from "@/lib/actions/BulkUploadQuestions";
 
 export const bulkUploadSchema = z.object({
   questions: z.instanceof(File).refine((file) => file.size < 7000000, {

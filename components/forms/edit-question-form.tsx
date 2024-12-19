@@ -30,8 +30,8 @@ import { Textarea } from "../ui/textarea";
 import { Image } from "../minimal-tiptap/extensions";
 import { Editor } from "@tiptap/core";
 import { cn } from "@/lib/utils";
-import editSingleQuestion from "@/app/actions/EditSingleQuestion";
 import { useToast } from "../ui/use-toast";
+import editSingleQuestion from "@/lib/actions/EditSingleQuestion";
 
 // Enum to match the QuestionType in Prisma
 const QuestionTypeEnum = z.enum(["multiple_choice", "multi_select"]);

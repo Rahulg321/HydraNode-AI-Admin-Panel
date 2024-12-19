@@ -1,4 +1,5 @@
 import {
+  ArrowLeftCircle,
   Calendar,
   ChevronDown,
   Home,
@@ -71,7 +72,13 @@ const items = [
   },
 ];
 
-export default function QuestionsSidebar({ examId }: { examId: string }) {
+export default function QuestionsSidebar({
+  examId,
+  examName,
+}: {
+  examId: string;
+  examName: string;
+}) {
   return (
     <Sidebar className="" collapsible="none" variant="inset">
       <SidebarHeader>
@@ -83,10 +90,17 @@ export default function QuestionsSidebar({ examId }: { examId: string }) {
                 <span>Add Question</span>
               </a>
             </SidebarMenuButton>
+            <SidebarMenuButton asChild>
+              <a href={`/exam/${examId}`}>
+                <ArrowLeftCircle />
+                <span>View Exam</span>
+              </a>
+            </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
+        <h3>Exam:- {examName}</h3>
         <Collapsible defaultOpen className="group/collapsible">
           <SidebarGroup>
             <SidebarGroupLabel asChild>

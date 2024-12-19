@@ -13,9 +13,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import deleteSingleQuestion from "@/app/actions/DeleteSingleQuestion";
 import { useToast } from "./ui/use-toast";
 import HtmlContent from "./html-content";
+import deleteSingleQuestion from "@/lib/actions/DeleteSingleQuestion";
 
 const SidebarComponentButton = ({
   examId,

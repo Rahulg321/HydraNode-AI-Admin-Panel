@@ -12,9 +12,9 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "./ui/button";
 import { Trash2 } from "lucide-react";
-import deleteExam from "@/app/actions/DeleteExam";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { useToast } from "./ui/use-toast";
+import deleteExam from "@/lib/actions/DeleteExam";
 
 const DeleteExamDialog = ({
   examTypeSlug,

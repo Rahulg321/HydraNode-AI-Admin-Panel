@@ -15,8 +15,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Question } from "@prisma/client";
-import TipTapEditor from "../tiptap-editor";
+
 import { MinimalTiptapEditor } from "../minimal-tiptap";
 import { Content } from "@tiptap/core";
 import {
@@ -31,9 +30,9 @@ import { Image } from "../minimal-tiptap/extensions";
 import { Editor } from "@tiptap/core";
 import { cn } from "@/lib/utils";
 import { useToast } from "../ui/use-toast";
-import addNewQuestion from "@/app/actions/AddNewQuestion";
 import { useRouter } from "next/navigation";
 import { ToastAction } from "../ui/toast";
+import addNewQuestion from "@/lib/actions/AddNewQuestion";
 
 const QuestionTypeEnum = z.enum(["multiple_choice", "multi_select"]);
 

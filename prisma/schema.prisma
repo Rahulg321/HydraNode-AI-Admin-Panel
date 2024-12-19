@@ -48,6 +48,7 @@ model User {
   Purchase              Purchase[]
 
   trialEndsAt DateTime? @map(name: "trial_ends_at") // Tracks when the user's free trial ends
+  Vendor      Vendor?
 }
 
 model Payment {
@@ -147,12 +148,49 @@ model Vendor {
   exams     Exam[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  userId String? @unique
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // might be a user vendor
+  isUserVendor   Boolean  @default(false)
+  commissionRate Float?
+  bio            String?
+  Payout         Payout[]
+
+  @@index([isUserVendor])
+}
+
+model Payout {
+  id          String       @id @default(cuid())
+  vendorId    String
+  vendor      Vendor       @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  amount      Float
+  currency    String
+  status      PayoutStatus @default(PENDING)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  processedAt DateTime?
+
+  // Possibly link to payments or purchases that composed this payout
+}
+
+enum PayoutStatus {
+  PENDING
+  PAID
+  FAILED
 }
 
 enum ExamLevel {
   ASSOCIATE
   PROFESSIONAL
   EXPERT
+}
+
+model Tag {
+  id    String @id @default(cuid())
+  name  String @unique
+  exams Exam[]
 }
 
 // each individual exam, it can belong to a vendor
@@ -165,6 +203,7 @@ model Exam {
   updatedAt       DateTime      @updatedAt
   timeAllowed     Int
   price           Float         @default(0)
+  category        String?
   stripeProductId String?
   stripePriceId   String?
   attempts        Int
@@ -176,7 +215,11 @@ model Exam {
   // questions to show to the user
   questionsToShow Int        @default(10) // Default value, can be adjusted
   description     String? // Description of the exam
+  subtitle        String? // subtitle of the exam
+  coverImage      String? // image of the exam
+  coverVideo      String? // video of the exam
   Purchase        Purchase[]
+  tags            Tag[]
 }
 
 model Purchase {
@@ -213,9 +256,12 @@ model QuizSession {
   userAttempts UserAttempt[]
 
   // New fields to track quiz result details
-  correctAnswers   Int      @default(0) // Tracks the number of correct answers
-  incorrectAnswers Int      @default(0) // Tracks the number of incorrect answers
-  skippedAnswers   Int      @default(0) // Tracks the number of skipped answers
+  correctAnswers   Int @default(0) // Tracks the number of correct answers
+  incorrectAnswers Int @default(0) // Tracks the number of incorrect answers
+  skippedAnswers   Int @default(0) // Tracks the number of skipped answers
+
+  questionCount Int @default(0)
+
   passFailStatus   Boolean? // True for pass, False for fail, nullable until quiz is evaluated
   percentageScored Float? // Stores the percentage score, nullable until quiz is completed
 

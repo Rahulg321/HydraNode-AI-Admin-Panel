@@ -24,10 +24,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useTransition } from "react";
 import { useToast } from "../ui/use-toast";
-import {
-  CreateExamFormSchema,
-  CreateExamFormZodType,
-} from "@/app/schemas/CreateExamSchema";
+
 import {
   Select,
   SelectContent,
@@ -35,8 +32,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import createExam from "@/app/actions/CreateExam";
-import EditExam from "@/app/actions/EditExam";
 import {
   Dialog,
   DialogContent,
@@ -47,6 +42,11 @@ import {
 } from "@/components/ui/dialog";
 import { HardHatIcon, PlusCircleIcon } from "lucide-react";
 import { Textarea } from "../ui/textarea";
+import {
+  CreateExamFormSchema,
+  CreateExamFormZodType,
+} from "@/lib/schemas/CreateExamSchema";
+import EditExam from "@/lib/actions/EditExam";
 
 const EditExamFormCard = ({
   examId,

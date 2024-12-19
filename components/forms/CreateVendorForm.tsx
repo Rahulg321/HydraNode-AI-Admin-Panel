@@ -15,12 +15,12 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useTransition } from "react";
-import { createVendor } from "@/app/actions/CreateVendor";
 import { useToast } from "../ui/use-toast";
 import {
   CreateVendorFormSchema,
   VendorFormZodType,
-} from "@/app/schemas/CreateVendorSchema";
+} from "@/lib/schemas/CreateVendorSchema";
+import { createVendor } from "@/lib/actions/CreateVendor";
 
 export default function CreateVendorForm({
   setOpenDialog,

@@ -115,7 +115,7 @@ export default Header;
 function NameLogo({}: {}) {
   return (
     <Link href={"/"}>
-      <h2>HydraNode Admin Panel</h2>
+      <h2>Admin Panel</h2>
     </Link>
   );
 }

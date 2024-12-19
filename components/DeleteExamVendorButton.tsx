@@ -9,9 +9,9 @@ import {
 } from "@/components/ui/tooltip";
 import { Trash2 } from "lucide-react";
 import { Button } from "./ui/button";
-import { deleteExamVendor } from "@/app/actions/DeleteExamVendor";
 import { useToast } from "./ui/use-toast";
 import { ToastAction } from "./ui/toast";
+import { deleteExamVendor } from "@/lib/actions/DeleteExamVendor";
 
 const DeleteExamVendorButton = ({ vendorId }: { vendorId: string }) => {
   const { toast } = useToast();

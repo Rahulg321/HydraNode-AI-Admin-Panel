@@ -15,10 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useTransition } from "react";
 import { useToast } from "../ui/use-toast";
-import {
-  CreateExamFormSchema,
-  CreateExamFormZodType,
-} from "@/app/schemas/CreateExamSchema";
+
 import {
   Select,
   SelectContent,
@@ -26,8 +23,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import createExam from "@/app/actions/CreateExam";
 import { Textarea } from "../ui/textarea";
+import {
+  CreateExamFormSchema,
+  CreateExamFormZodType,
+} from "@/lib/schemas/CreateExamSchema";
+import createExam from "@/lib/actions/CreateExam";
 
 const CreateExamForm = ({
   vendorId,
