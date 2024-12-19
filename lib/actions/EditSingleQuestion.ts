@@ -1,9 +1,7 @@
 "use server";
 
 import db from "@/lib/db";
-import { Question } from "@/lib/types";
 import { revalidatePath } from "next/cache";
-import { EditQuestionZodType } from "../../src/app/schemas/EditQuestionSchema";
 import { EditQuestionFormZodType } from "@/components/forms/edit-question-form";
 
 export default async function editSingleQuestion(
