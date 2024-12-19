@@ -20,6 +20,7 @@ import Papa from "papaparse";
 import { FileIcon, Loader } from "lucide-react";
 import { useToast } from "../ui/use-toast";
 import BulkUploadQuestions from "@/lib/actions/BulkUploadQuestions";
+import { useRouter } from "next/navigation";
 
 export const bulkUploadSchema = z.object({
   questions: z.instanceof(File).refine((file) => file.size < 7000000, {
@@ -38,6 +39,7 @@ const BulkUploadQuestionsButton = ({
 }) => {
   const [isPending, startTransition] = React.useTransition();
   const { toast } = useToast();
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof bulkUploadSchema>>({
     resolver: zodResolver(bulkUploadSchema),
@@ -64,6 +66,7 @@ const BulkUploadQuestionsButton = ({
             const response = await BulkUploadQuestions(examId, parsedData.data);
 
             if (response.type === "success") {
+              router.refresh();
               toast({
                 variant: "success",
                 title: "Successfully Uploaded Questions 🎉",

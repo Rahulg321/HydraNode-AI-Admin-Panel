@@ -9,6 +9,7 @@ import { ExamTagForm } from "@/components/forms/exam-tag-form";
 import ExamInformationForm from "@/components/forms/exam-info-form";
 import ExamImageUploadDialog from "@/components/dialogs/exam-image-upload-dialog";
 import ExamVideoUploadDialog from "@/components/dialogs/exam-video-upload-dialog";
+import PreviousPageButton from "@/components/PreviousPageButton";
 
 export default async function ExamEditor({ examId }: { examId: string }) {
   const currentExam = await db.exam.findUnique({
@@ -45,6 +46,7 @@ export default async function ExamEditor({ examId }: { examId: string }) {
   return (
     <div className="mx-auto max-w-4xl space-y-8 p-6">
       <div>
+        <PreviousPageButton />
         <h1 className="">Edit {name}</h1>
         <p className="mt-2 text-muted-foreground">
           Your course landing page is crucial to your success. If it&apos;s done

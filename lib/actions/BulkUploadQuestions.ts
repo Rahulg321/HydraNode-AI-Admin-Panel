@@ -1,6 +1,7 @@
 "use server";
 
 import db from "@/lib/db";
+import { revalidatePath } from "next/cache";
 
 const BulkUploadQuestions = async (examId: string, sheetData: any) => {
   try {
@@ -38,6 +39,9 @@ const BulkUploadQuestions = async (examId: string, sheetData: any) => {
       data: cleanedData,
       skipDuplicates: true, // Optional: skips entries with duplicate IDs
     });
+
+    revalidatePath(`/exam/${examId}/questions`);
+    revalidatePath(`/exam/${examId}/questions/new`);
 
     return {
       type: "success",

@@ -95,7 +95,15 @@ async function ExamTypeCard({ vendor }: { vendor: Vendor }) {
         <CardDescription className="font-semibold"></CardDescription>
         <DeleteExamVendorButton vendorId={vendor.id} />
       </CardHeader>
-      <CardContent className="p-4"></CardContent>
+      <CardContent className="p-4">
+        {vendor.isUserVendor ? (
+          <div>
+            <span>This is a User Vendor</span>
+          </div>
+        ) : (
+          <div></div>
+        )}
+      </CardContent>
       <CardFooter className="flex flex-col gap-4">
         <Button className="w-full" asChild>
           <Link href={`/vendors/${vendor.id}`}>

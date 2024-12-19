@@ -12,6 +12,7 @@ import {
 
 import db from "@/lib/db";
 import ChangeExamPriceForm from "@/components/forms/exam-price-form";
+import PreviousPageButton from "@/components/PreviousPageButton";
 
 export default async function CoursePricingPage(props: {
   params: Promise<{
@@ -49,6 +50,7 @@ export default async function CoursePricingPage(props: {
 
   return (
     <div className="mx-auto max-w-3xl space-y-6 p-4">
+      <PreviousPageButton />
       <h2>Exam:- {fetchedExam.name}</h2>
       <Alert className="border-amber-200 bg-amber-50">
         <AlertTriangle className="h-4 w-4" />
