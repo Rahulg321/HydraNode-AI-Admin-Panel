@@ -1,11 +1,17 @@
+import { auth } from "@/auth";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Search } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
 const HomePage = async () => {
+    const session = await auth()
+
   return (
     <section className="relative overflow-hidden min-h-screen">
+      {
+        JSON.stringify(session)
+      }
       <div className="relative z-10 container mx-auto px-4 py-24 sm:py-32">
         <div className="max-w-3xl mx-auto text-center">
           <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl mb-6 ">

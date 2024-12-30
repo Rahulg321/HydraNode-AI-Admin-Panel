@@ -1,11 +1,14 @@
 import { NextResponse } from "next/server";
-import { auth } from "./auth";
 import {
   AUTH_ROUTES,
   DEFAULT_LOGIN_REDIRECT,
   PROTECTED_BASE_ROUTES,
   PROTECTED_ROUTES,
-} from "./routes";
+} from "../routes";
+import NextAuth from "next-auth";
+import { auth } from "@/auth";
+
+// 2. Wrapped middleware option
 
 export default auth((req) => {
   // Your custom middleware logic goes here
@@ -14,12 +17,12 @@ export default auth((req) => {
   const isLoggedIn = !!req.auth;
 
   const isProtectedBaseRoute = PROTECTED_BASE_ROUTES.some((el) =>
-    currentPathname.startsWith(el)
+    currentPathname.startsWith(el),
   );
 
   if (isProtectedBaseRoute && !isLoggedIn) {
     console.log(
-      "Access denied for not logged-in users trying to access a protected base route"
+      "Access denied for not logged-in users trying to access a protected base route",
     );
     return NextResponse.redirect(new URL("/auth/login", req.url));
   }
@@ -28,7 +31,7 @@ export default auth((req) => {
     // we are accessing an auth route
     if (isLoggedIn) {
       console.log(
-        "access denied for accessing auth routes for logged in users"
+        "access denied for accessing auth routes for logged in users",
       );
       // we are already logged in so we cant access the auth routes anymore
       return NextResponse.redirect(new URL(DEFAULT_LOGIN_REDIRECT, req.url));

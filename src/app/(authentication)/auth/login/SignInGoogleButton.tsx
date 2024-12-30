@@ -1,5 +1,6 @@
 import { signIn } from "@/auth";
 import { Button } from "@/components/ui/button";
+import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 import { FcGoogle } from "react-icons/fc";
 
 export default function SigninWithGoogleForm() {
